@@ -5,7 +5,12 @@ pygame.init()
 option_image = pygame.image.load('options.png')
 button_on = pygame.image.load("mute.png")
 button_off = pygame.image.load("unmute.png")
-button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "on"}
+button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "off"}
+
+#사운드 파일
+pygame.mixer.music.load("background.mp3")
+pygame.mixer.music.play(-1,0.0)
+pygame.mixer.music.set_volume(0.25)
 
 # 버튼에 사용할 색상 지정
 BUTTON_COLOR = (100, 100, 100)
@@ -78,7 +83,10 @@ while True:
                         exit()
    
         if my_address == 1:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 screen.blit(option_image,(screen_width/8,screen_height/8))
                 screen.blit(button_music["image_"+button_music["state"]], (button_music["x"], button_music["y"]))
                 if event.button == 1:
@@ -86,7 +94,10 @@ while True:
                     if button_music["x"] <= click_x <= button_music["x"] + button_on.get_width() and \
                         button_music["y"] <= click_y <= button_music["y"] + button_on.get_height():
                         button_music["state"] = "off" if button_music["state"] == "on" else "on"
-
+                        if button_music["state"] == "on":
+                            pygame.mixer.music.set_volume(0.25)
+                        elif button_music["state"] == "off":
+                            pygame.mixer.music.set_volume(0)
 
    
 

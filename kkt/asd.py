@@ -10,7 +10,7 @@ button_on = pygame.image.load("mute.png")
 button_off = pygame.image.load("unmute.png")
 
 # 버튼 객체
-button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "on"}
+button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "off"}
 button_sound = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 300, "state": "on"}
 
 # 클릭한 좌표
