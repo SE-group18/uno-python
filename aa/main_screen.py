@@ -1,14 +1,9 @@
 import pygame
-import button
-
 pygame.init()
 
 # 버튼에 사용할 색상 지정
 BUTTON_COLOR = (100, 100, 100)
 BUTTON_SELECTED_COLOR = (200, 200, 200)
-
-# 버튼 두께
-BUTTON_THICK=10
 
 # 화면 크기 및 제목 설정
 screen_width, screen_height = 400, 300
@@ -21,25 +16,17 @@ background = pygame. image.load("test.png");
 screen.blit(background,(0,0));
 """
 
-start_img = pygame.image.load('start.png').convert_alpha()
-option_img = pygame.image.load('option.png').convert_alpha()
-exit_img = pygame.image.load('exit.png').convert_alpha()
-
-
 # 버튼 텍스트에 사용할 폰트 설정
 font = pygame.font.Font(None, screen_height//12)
 
 
 # 버튼 생성 함수
-def create_button(x, y, width, height, text, bool):
+def create_button(x, y, width, height, text):
     button_surface = pygame.Surface((width, height))
     button_rect = button_surface.get_rect()
     button_rect.x, button_rect.y = x, y
 
-    if bool==True:
-        pygame.draw.rect(button_surface, BUTTON_SELECTED_COLOR, (0, 0, width, height), BUTTON_THICK)
-    else:
-        pygame.draw.rect(button_surface, BUTTON_COLOR, (0, 0, width, height), BUTTON_THICK)
+    pygame.draw.rect(button_surface, BUTTON_COLOR, (0, 0, width, height), 1)
 
     text_surface = font.render(text, True, (123, 123, 123))
     text_rect = text_surface.get_rect(center=button_rect.center)
@@ -47,12 +34,14 @@ def create_button(x, y, width, height, text, bool):
 
     screen.blit(button_surface, button_rect)  # 버튼 surface를 화면 surface에 blit
     screen.blit(text_surface, text_rect)
+
     return button_rect  # 버튼 rect를 반환
     
 
-start_button = button.Button(screen_width//2-screen_width/8, screen_height/2,start_img, screen_width/1100)
-options_button = button.Button(screen_width//2-screen_width/8, screen_height/1.5, option_img, screen_width/1100)
-quit_button = button.Button(screen_width//2-screen_width/8, screen_height/1.2, exit_img, screen_width/1100)
+# 버튼 생성
+start_button = create_button(screen_width//2-screen_width/8, screen_height/2, screen_width/4, screen_height/12, "Start Game")
+options_button = create_button(screen_width//2-screen_width/8, screen_height/1.5, screen_width/4, screen_height/12, "Options")
+quit_button = create_button(screen_width//2-screen_width/8, screen_height/1.2, screen_width/4, screen_height/12, "Quit")
 
 # 선택된 버튼
 selected_button_list = [start_button,options_button,quit_button]
@@ -60,23 +49,13 @@ selected_button = start_button
 
 # 버튼 색변경
 def change_color(index1,index2):
-    pygame.draw.rect(screen, BUTTON_COLOR, selected_button_list[index1], BUTTON_THICK)
-    pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button_list[index2], BUTTON_THICK)
-        
+    pygame.draw.rect(screen, BUTTON_COLOR, selected_button_list[index1], 1)
+    pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button_list[index2], 1)
 
 
 # 게임 루프
 while True:
-    screen.fill(BUTTON_COLOR)
-
-    if start_button.draw(screen):
-        print("START")
-    if options_button.draw(screen):
-        print("option")
-    if quit_button.draw(screen):
-        print("exit")
-        pygame.quit()
-        exit()   
+    
     for event in pygame.event.get():
 
     
@@ -120,10 +99,35 @@ while True:
                     # Quit 버튼 클릭 시 실행할 코드
                     pygame.quit()
                     exit()
-   
+        
+        elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
+            if event.button == 1:
+                click_x, click_y = event.pos
+                
+                #Start 버튼
+                if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                    print('START')
+                    pass
+                    #Option 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                    print('OPTION')
+                    pass
+                    
+                        
+                    #Quit 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                    print('QUIT')
+                    pygame.quit()
+                    exit()
+    
+                   
 
-
-
+        
+        
+    
     
 
     pygame.display.update()
