@@ -28,10 +28,10 @@ while True:
             if event.button == 1:
                 click_x, click_y = event.pos
                 if button_music["x"] <= click_x <= button_music["x"] + button_on.get_width() and \
-                   button_music["y"] <= click_y <= button_music["y"] + button_on.get_height():
+                    button_music["y"] <= click_y <= button_music["y"] + button_on.get_height():
                     button_music["state"] = "off" if button_music["state"] == "on" else "on"
                 elif button_sound["x"] <= click_x <= button_sound["x"] + button_on.get_width() and \
-                     button_sound["y"] <= click_y <= button_sound["y"] + button_on.get_height():
+                    button_sound["y"] <= click_y <= button_sound["y"] + button_on.get_height():
                     button_sound["state"] = "off" if button_sound["state"] == "on" else "on"
 
     # 화면 지우기

@@ -1,6 +1,12 @@
 import pygame
 pygame.init()
 
+#이미지 파일
+option_image = pygame.image.load('options.png')
+button_on = pygame.image.load("mute.png")
+button_off = pygame.image.load("unmute.png")
+button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "on"}
+
 # 버튼에 사용할 색상 지정
 BUTTON_COLOR = (100, 100, 100)
 BUTTON_SELECTED_COLOR = (200, 200, 200)
@@ -44,31 +50,42 @@ quit_button = create_button(screen_width//2-screen_width/8, screen_height/1.5, s
 selected_button_list = [start_button,options_button,quit_button]
 selected_button = start_button
 # 게임 루프
+my_address = 0
 while True:
     for event in pygame.event.get():
-        
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                click_x, click_y = event.pos
-                #Start 버튼
-                if screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                   screen_height/3 <= click_y <= screen_height/3 + screen_height/12:
-                    pass
-                #Option 버튼
-                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                   screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
-                    
-                    pass
-                #Quit 버튼
-                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                   screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:
-                    pygame.quit()
-                    exit()
+        if my_address == 0:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    print(event.button)
+                    #Start 버튼
+                    if screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/3 <= click_y <= screen_height/3 + screen_height/12:
+                        pass
+                    #Option 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                        screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                        my_address = 1
+                            
+                        
+                    #Quit 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:
+                        pygame.quit()
+                        exit()
    
-
+        if my_address == 1:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                screen.blit(option_image,(screen_width/8,screen_height/8))
+                screen.blit(button_music["image_"+button_music["state"]], (button_music["x"], button_music["y"]))
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    if button_music["x"] <= click_x <= button_music["x"] + button_on.get_width() and \
+                        button_music["y"] <= click_y <= button_music["y"] + button_on.get_height():
+                        button_music["state"] = "off" if button_music["state"] == "on" else "on"
 
 
    
