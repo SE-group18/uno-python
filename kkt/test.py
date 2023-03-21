@@ -6,6 +6,7 @@ option_image = pygame.image.load('options.png')
 button_on = pygame.image.load("mute.png")
 button_off = pygame.image.load("unmute.png")
 button_music = {"image_on": button_on, "image_off": button_off, "x": 200, "y": 200, "state": "off"}
+anybutton = pygame.image.load("a.png")
 
 #사운드 파일
 pygame.mixer.music.load("background.mp3")
@@ -89,6 +90,7 @@ while True:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 screen.blit(option_image,(screen_width/8,screen_height/8))
                 screen.blit(button_music["image_"+button_music["state"]], (button_music["x"], button_music["y"]))
+                screen.blit(anybutton, (500,500))
                 if event.button == 1:
                     click_x, click_y = event.pos
                     if button_music["x"] <= click_x <= button_music["x"] + button_on.get_width() and \
@@ -98,6 +100,11 @@ while True:
                             pygame.mixer.music.set_volume(0.25)
                         elif button_music["state"] == "off":
                             pygame.mixer.music.set_volume(0)
+                    elif 500 <= click_x <= 530 and 500 <= click_y <= 530:
+                        screen_width = 1200
+                        screen_height = 900
+                        screen = pygame.display.set_mode((screen_width, screen_height))
+                    
 
    
 
