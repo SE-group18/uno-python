@@ -497,11 +497,13 @@ def title_screen():
     # 선택된 버튼
     selected_button_list = [start_button,options_button,quit_button]
     selected_button = start_button
-
+    pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button, 1)
+    
 #    버튼 색변경
     def change_color(index1,index2):
         pygame.draw.rect(screen, BUTTON_COLOR, selected_button_list[index1], 1)
         pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button_list[index2], 1)
+
     while game_control.title:   
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
