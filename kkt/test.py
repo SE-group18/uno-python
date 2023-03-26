@@ -1,16 +1,27 @@
 import pygame
+import json
+
 pygame.init()
 
 #타이틀
 
 
 # 화면 크기 및 제목 설정
-screen_width, screen_height = 2560, 1440
+screen_width, screen_height = 1280, 720
 
 #타이틀
+try:
+    with open("config.txt", "r") as f:
+        config = json.load(f)
+    screen_width = config["screen_width"]
+    screen_height = config["screen_height"]
+except:
+    pass
 
 
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+
+
+screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("My Game")
 
 # 배경 이미지 불러오기
@@ -23,18 +34,13 @@ screen.blit(background,(0,0));
 
 # 게임 루프
 while True:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-    display_info = pygame.display.Info()
 
     # 전체화면의 screen_width와 screen_height 구하기
-    screen_width = display_info.current_w
-    screen_height = display_info.current_h
-
-    print(screen_width)
-    print(screen_height)
     
 
 

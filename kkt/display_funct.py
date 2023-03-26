@@ -2,9 +2,12 @@ import game_classes
 import pygame
 from pygame.locals import *
 import display_funct
+import json
 
 pygame.init()
 
+#Defaul 설정
+screen_width, screen_height = 1600, 900
 option = False
 setting = False
 title = True
@@ -12,6 +15,21 @@ sound_option = "on"
 color_option = "off"
 i = 0
 full = False
+
+#불러오기
+try:
+    with open("config.txt", "r") as f:
+        config = json.load(f)
+    print(1)
+    screen_width = config["screen_width"]
+    screen_height = config["screen_height"]
+    sound_option = config["sound_option"]
+    color_option = config["color_option"]
+    full = config["full"]
+
+except:
+    pass
+
 
 # global screen vairable to be used globaly (as all parts of the game
 # refrence the same screen)
@@ -27,8 +45,8 @@ black = (0, 0, 0)
 pink = (255, 200, 200)
 
 # defining screen 16:9 native
-size_o = screen_width, screen_height = 1600, 900
-scale_size = size_o
+
+scale_size = (screen_width, screen_height)
 scale_card_size = 0
 
 # scaling factors that are initially set the scale value of 1 (native to
@@ -37,7 +55,10 @@ scale_x = 1
 scale_y = 1
 
 # defining the global pygame screen value to be used within PY-UNO
-screen = pygame.display.set_mode(size_o, HWSURFACE | DOUBLEBUF)
+if full == False:
+    screen = pygame.display.set_mode((screen_width, screen_height), HWSURFACE | DOUBLEBUF)
+else:
+    screen = pygame.display.set_mode((screen_width, screen_height), HWSURFACE | DOUBLEBUF | FULLSCREEN)
 screen.fill(black)
 
 # default card rectangle size and card size and default card pygame rectangle
@@ -68,7 +89,7 @@ def handle_resize(event):
     global scale_y
 
     # grabbing new scaling factor values
-    (x_o, y_o) = size_o
+    (x_o, y_o) = (screen_width, screen_height)
     (x_1, y_1) = scale_size
     # calculating new scaling factor values
     scale_x = (x_1 / x_o)
@@ -531,8 +552,10 @@ def setting_screen():
                     if selected_option == "sound":
                         if display_funct.sound_option == "on":
                             display_funct.sound_option = "off"
+                            config["sound_option"] = "off"
                         elif display_funct.sound_option == "off":
                             display_funct.sound_option = "on"
+                            config["sound_option"] = "on"
 
                     if selected_option == "small":
                         width = 1280
@@ -543,6 +566,10 @@ def setting_screen():
                             image_scale()
                             pygame.display.set_mode((screen_width,screen_height))
                             display_funct.full = False
+                            config["screen_width"] = screen_width
+                            config["screen_height"] = screen_height
+                            config["full"] = False
+                            
                         elif width == screen_width and height == screen_height:
                             pass
                         else:
@@ -550,6 +577,9 @@ def setting_screen():
                             display_funct.screen_height = height 
                             image_scale()
                             pygame.display.set_mode((screen_width,screen_height))
+                            config["screen_width"] = screen_width
+                            config["screen_height"] = screen_height
+                            config["full"] = False
                     
                     if selected_option == "med":
                         width = 1600
@@ -560,6 +590,10 @@ def setting_screen():
                             image_scale()
                             pygame.display.set_mode((screen_width,screen_height))
                             display_funct.full = False
+                            config["screen_width"] = screen_width
+                            config["screen_height"] = screen_height
+                            config["full"] = False
+
                         elif width == screen_width and height == screen_height:
                             pass
                         else:
@@ -567,26 +601,39 @@ def setting_screen():
                             display_funct.screen_height = height 
                             image_scale()
                             pygame.display.set_mode((screen_width,screen_height))
+                            config["screen_width"] = screen_width
+                            config["screen_height"] = screen_height
+                            config["full"] = False
                     
-                    if selected_option == "full":                             
-                        pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN)
-                        display_info = pygame.display.Info()
-                        width = display_info.current_w
-                        height = display_info.current_h
-                        display_funct.screen_width = width 
-                        display_funct.screen_height = height 
-                        image_scale()
-                        display_funct.full = True
+                    if selected_option == "full":
+                        if display_funct.full == True:
+                            pass
+                        else:
+                            pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN)
+                            display_info = pygame.display.Info()
+                            width = display_info.current_w
+                            height = display_info.current_h
+                            display_funct.screen_width = width 
+                            display_funct.screen_height = height 
+                            image_scale()
+                            display_funct.full = True
+                            config["screen_width"] = screen_width
+                            config["screen_height"] = screen_height
+                            config["full"] = True
 
                     if selected_option == "color":
                         if display_funct.color_option == "on":
                             display_funct.color_option = "off"
+                            config["color_option"] = "off"
                         elif display_funct.color_option == "off":
                             display_funct.color_option = "on"
+                            config["color_option"] = "on"
 
 
                     elif selected_option == "close":
                         display_funct.setting = False
+        with open("config.txt", "w") as f:
+            json.dump(config, f)
         pygame.display.flip()
 
 ################################################# 시작 화면 ################################################
@@ -676,43 +723,43 @@ def title_screen():
 
 ################################### 이미지 파일 ###############################################
 #타이틀
-titlestart_image = pygame.image.load("titlestart.png")
-titleoption_image = pygame.image.load("titleoption.png")
-titleexit_image = pygame.image.load("titleexit.png")
+titlestart_image = pygame.image.load("image/titlestart.png")
+titleoption_image = pygame.image.load("image/titleoption.png")
+titleexit_image = pygame.image.load("image/titleexit.png")
 
 #타이틀_ON
-titlestart_on_image = pygame.image.load("titlestart_on.png")
-titleoption_on_image = pygame.image.load("titleoption_on.png")
-titleexit_on_image = pygame.image.load("titleexit_on.png")
+titlestart_on_image = pygame.image.load("image/titlestart_on.png")
+titleoption_on_image = pygame.image.load("image/titleoption_on.png")
+titleexit_on_image = pygame.image.load("image/titleexit_on.png")
 
 #ESC
-setting_image = pygame.image.load("setting.png")
-title_image = pygame.image.load("title.png")
-resume_image = pygame.image.load("resume.png")
-exit_image = pygame.image.load("exit.png")
+setting_image = pygame.image.load("image/setting.png")
+title_image = pygame.image.load("image/title.png")
+resume_image = pygame.image.load("image/resume.png")
+exit_image = pygame.image.load("image/exit.png")
 
 #ESC_ON
-resume_on_image = pygame.image.load("resume_on.png")
-title_on_image = pygame.image.load("title_on.png")
-setting_on_image = pygame.image.load("setting_on.png")
-exit_on_image = pygame.image.load("exit_on.png")
+resume_on_image = pygame.image.load("image/resume_on.png")
+title_on_image = pygame.image.load("image/title_on.png")
+setting_on_image = pygame.image.load("image/setting_on.png")
+exit_on_image = pygame.image.load("image/exit_on.png")
 
 #옵션
-option_image = pygame.image.load("option.png")
-soundon_image = pygame.image.load("soundon.png")
-small_image = pygame.image.load("small.png")
-med_image = pygame.image.load("med.png")
-full_image = pygame.image.load("full.png")
-check_image = pygame.image.load("check.png")
-checkon_image = pygame.image.load("checkon.png")
+option_image = pygame.image.load("image/option.png")
+soundon_image = pygame.image.load("image/soundon.png")
+small_image = pygame.image.load("image/small.png")
+med_image = pygame.image.load("image/med.png")
+full_image = pygame.image.load("image/full.png")
+check_image = pygame.image.load("image/check.png")
+checkon_image = pygame.image.load("image/checkon.png")
 
 #옵션_ON
-soundon_on_image = pygame.image.load("soundon_on.png")
-full_on_image = pygame.image.load("full_on.png")
-check_on_image = pygame.image.load("check_on.png")
-checkon_on_image = pygame.image.load("checkon_on.png")
-small_on_image = pygame.image.load("small_on.png")
-med_on_image = pygame.image.load("med_on.png")
+soundon_on_image = pygame.image.load("image/soundon_on.png")
+full_on_image = pygame.image.load("image/full_on.png")
+check_on_image = pygame.image.load("image/check_on.png")
+checkon_on_image = pygame.image.load("image/checkon_on.png")
+small_on_image = pygame.image.load("image/small_on.png")
+med_on_image = pygame.image.load("image/med_on.png")
 
 
 
