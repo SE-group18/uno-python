@@ -8,7 +8,10 @@ pygame.init()
 option = False
 setting = False
 title = True
+sound_option = "on"
+color_option = "off"
 i = 0
+full = False
 
 # global screen vairable to be used globaly (as all parts of the game
 # refrence the same screen)
@@ -34,7 +37,7 @@ scale_x = 1
 scale_y = 1
 
 # defining the global pygame screen value to be used within PY-UNO
-screen = pygame.display.set_mode(size_o, HWSURFACE | DOUBLEBUF | RESIZABLE)
+screen = pygame.display.set_mode(size_o, HWSURFACE | DOUBLEBUF)
 screen.fill(black)
 
 # default card rectangle size and card size and default card pygame rectangle
@@ -429,7 +432,7 @@ def esc_screen():
                     elif selected_button == "exit":
                         selected_button = "resume"
 
-                elif event.key == pygame.K_UP:
+                elif event.key == event.key == pygame.K_UP or event.key == pygame.K_KP_ENTER or event.key == pygame.K_SPACE:
                     if selected_button == "resume":
                         display_funct.i = 1
                         display_funct.option = False
@@ -453,17 +456,44 @@ def setting_screen():
     while display_funct.setting == True:
         green = (0,0,0)
         screen.fill(green)
-        screen.blit(option_1, (display_funct.screen_width*5/16,display_funct.screen_height*1/24))
-        screen.blit(soundon_button, (display_funct.screen_width*8/16,display_funct.screen_height*2/3))
-        screen.blit(small_button, (display_funct.screen_width*8/16,display_funct.screen_height*1/6))
-        screen.blit(med_button, (display_funct.screen_width*8/16,display_funct.screen_height*2/6))
-        screen.blit(full_button, (display_funct.screen_width*8/16,display_funct.screen_height*3/6))
+        screen.blit(option_1, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
+        screen.blit(small_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*370/900))
+        screen.blit(med_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*440/900))
+        screen.blit(full_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*510/900))
+        screen.blit(check_button, (display_funct.screen_width*775/1600,display_funct.screen_height*690/900))
 
-        if selected_option == "sound":
-            screen.blit(soundon_on_button, (display_funct.screen_width*8/16,display_funct.screen_height*2/3))
-        elif selected_option == "small":
-            screen.blit(full_on_button, (display_funct.screen_width*8/16,display_funct.screen_height*1/6))
+        #사운드
+        if selected_option == "sound" and display_funct.sound_option == "on":
+            screen.blit(checkon_on_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*290/900))
+        elif selected_option == "sound" and display_funct.sound_option == "off":
+            screen.blit(check_on_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*290/900))
+        elif display_funct.sound_option == "on":
+            screen.blit(checkon_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*290/900))
+        elif display_funct.sound_option == "off":
+            screen.blit(check_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*290/900))
         
+        #해상도
+        if selected_option == "small":
+            screen.blit(small_on_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*370/900))
+        if selected_option == "med":
+            screen.blit(med_on_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*440/900))
+        if selected_option == "full":
+            screen.blit(full_on_button, (display_funct.screen_width*1605/3200,display_funct.screen_height*510/900))
+
+        #색약모드
+        if selected_option == "color" and display_funct.color_option == "on":
+            screen.blit(checkon_on_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*590/900))
+        elif selected_option == "color" and display_funct.color_option == "off":
+            screen.blit(check_on_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*590/900))
+        elif display_funct.color_option == "on":
+            screen.blit(checkon_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*590/900))
+        elif display_funct.color_option == "off":
+            screen.blit(check_button, (display_funct.screen_width*1695/3200,display_funct.screen_height*590/900))
+
+        #Close
+        if selected_option == "close":
+            screen.blit(check_on_button, (display_funct.screen_width*775/1600,display_funct.screen_height*690/900))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -474,28 +504,87 @@ def setting_screen():
                         pass
                     elif selected_option == "small":
                         selected_option = "sound"
-                    elif selected_option == "close":
+                    elif selected_option == "med":
                         selected_option = "small"
-
+                    elif selected_option == "full":
+                        selected_option = "med"
+                    elif selected_option == "color":
+                        selected_option = "full"
+                    elif selected_option == "close":
+                        selected_option = "color"
+                        
                 elif event.key == pygame.K_DOWN:
                     if selected_option == "sound":
                         selected_option = "small"
                     elif selected_option == "small":
+                        selected_option = "med"
+                    elif selected_option == "med":
+                        selected_option = "full"
+                    elif selected_option == "full":
+                        selected_option = "color"
+                    elif selected_option == "color":
                         selected_option = "close"
                     elif selected_option == "close":
                         pass
 
                 elif event.key == pygame.K_SPACE:
+                    if selected_option == "sound":
+                        if display_funct.sound_option == "on":
+                            display_funct.sound_option = "off"
+                        elif display_funct.sound_option == "off":
+                            display_funct.sound_option = "on"
+
                     if selected_option == "small":
                         width = 1280
                         height = 720
-                        if width == screen_width and height == screen_height:
+                        if display_funct.full == True:
+                            display_funct.screen_width = width 
+                            display_funct.screen_height = height 
+                            image_scale()
+                            pygame.display.set_mode((screen_width,screen_height))
+                            display_funct.full = False
+                        elif width == screen_width and height == screen_height:
                             pass
                         else:
                             display_funct.screen_width = width 
                             display_funct.screen_height = height 
                             image_scale()
                             pygame.display.set_mode((screen_width,screen_height))
+                    
+                    if selected_option == "med":
+                        width = 1600
+                        height = 900
+                        if display_funct.full == True:
+                            display_funct.screen_width = width 
+                            display_funct.screen_height = height 
+                            image_scale()
+                            pygame.display.set_mode((screen_width,screen_height))
+                            display_funct.full = False
+                        elif width == screen_width and height == screen_height:
+                            pass
+                        else:
+                            display_funct.screen_width = width 
+                            display_funct.screen_height = height 
+                            image_scale()
+                            pygame.display.set_mode((screen_width,screen_height))
+                    
+                    if selected_option == "full":                             
+                        pygame.display.set_mode((screen_width,screen_height),pygame.FULLSCREEN)
+                        display_info = pygame.display.Info()
+                        width = display_info.current_w
+                        height = display_info.current_h
+                        display_funct.screen_width = width 
+                        display_funct.screen_height = height 
+                        image_scale()
+                        display_funct.full = True
+
+                    if selected_option == "color":
+                        if display_funct.color_option == "on":
+                            display_funct.color_option = "off"
+                        elif display_funct.color_option == "off":
+                            display_funct.color_option = "on"
+
+
                     elif selected_option == "close":
                         display_funct.setting = False
         pygame.display.flip()
@@ -614,10 +703,16 @@ soundon_image = pygame.image.load("soundon.png")
 small_image = pygame.image.load("small.png")
 med_image = pygame.image.load("med.png")
 full_image = pygame.image.load("full.png")
+check_image = pygame.image.load("check.png")
+checkon_image = pygame.image.load("checkon.png")
 
 #옵션_ON
 soundon_on_image = pygame.image.load("soundon_on.png")
 full_on_image = pygame.image.load("full_on.png")
+check_on_image = pygame.image.load("check_on.png")
+checkon_on_image = pygame.image.load("checkon_on.png")
+small_on_image = pygame.image.load("small_on.png")
+med_on_image = pygame.image.load("med_on.png")
 
 
 
@@ -638,7 +733,6 @@ setting_button = pygame.transform.scale(setting_image, (display_funct.screen_wid
 title_button = pygame.transform.scale(title_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
 resume_button = pygame.transform.scale(resume_image, (display_funct.screen_width/16,display_funct.screen_height/9))
 exit_button = pygame.transform.scale(exit_image, (display_funct.screen_width/16,display_funct.screen_height/9))
-option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*3/8,display_funct.screen_height*11/12))
 
 #ESC_ON
 resume_on_button = pygame.transform.scale(resume_on_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
@@ -647,14 +741,22 @@ setting_on_button = pygame.transform.scale(setting_on_image, (display_funct.scre
 exit_on_button = pygame.transform.scale(exit_on_image, (display_funct.screen_width/16,display_funct.screen_height/9))
 
 #옵션
-small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
-med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
-full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*505/1600,display_funct.screen_height*800/900))
+soundon_button = pygame.transform.scale(soundon_image, (display_funct.screen_width/32,display_funct.screen_height/18))
+small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+check_button = pygame.transform.scale(check_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+checkon_button = pygame.transform.scale(checkon_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+
 
 #옵션_ON
 soundon_on_button = pygame.transform.scale(soundon_on_image, (display_funct.screen_width/32,display_funct.screen_height/18))
-soundon_button = pygame.transform.scale(soundon_image, (display_funct.screen_width/32,display_funct.screen_height/18))
-full_on_button = pygame.transform.scale(full_on_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+full_on_button = pygame.transform.scale(full_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+check_on_button = pygame.transform.scale(check_on_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+checkon_on_button = pygame.transform.scale(checkon_on_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+small_on_button = pygame.transform.scale(small_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+med_on_button = pygame.transform.scale(med_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
 
 
 
@@ -674,7 +776,6 @@ def image_scale():
     display_funct.title_button = pygame.transform.scale(title_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
     display_funct.resume_button = pygame.transform.scale(resume_image, (display_funct.screen_width/16,display_funct.screen_height/9))
     display_funct.exit_button = pygame.transform.scale(exit_image, (display_funct.screen_width/16,display_funct.screen_height/9))
-    display_funct.option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*3/8,display_funct.screen_height*11/12))
     
     #ESC_ON
     display_funct.resume_on_button = pygame.transform.scale(resume_on_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
@@ -684,11 +785,19 @@ def image_scale():
 
 
     #옵션
-    display_funct.small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
-    display_funct.med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
-    display_funct.full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+    display_funct.option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*505/1600,display_funct.screen_height*800/900))
+    display_funct.small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+    display_funct.med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+    display_funct.full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+    display_funct.check_button = pygame.transform.scale(check_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+    display_funct.checkon_button = pygame.transform.scale(checkon_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+    
 
     #옵션_ON
     display_funct.soundon_on_button = pygame.transform.scale(soundon_on_image, (display_funct.screen_width/32,display_funct.screen_height/18))
     display_funct.soundon_button = pygame.transform.scale(soundon_image, (display_funct.screen_width/32,display_funct.screen_height/18))
-    display_funct.full_on_button = pygame.transform.scale(full_on_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+    display_funct.full_on_button = pygame.transform.scale(full_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+    display_funct.check_on_button = pygame.transform.scale(check_on_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+    display_funct.checkon_on_button = pygame.transform.scale(checkon_on_image, (display_funct.screen_width*13/320,display_funct.screen_height/18))
+    display_funct.small_on_button = pygame.transform.scale(small_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
+    display_funct.med_on_button = pygame.transform.scale(med_on_image, (display_funct.screen_width*7/64,display_funct.screen_height/18))
