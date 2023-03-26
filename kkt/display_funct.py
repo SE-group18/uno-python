@@ -487,10 +487,15 @@ def setting_screen():
 
                 elif event.key == pygame.K_SPACE:
                     if selected_option == "small":
-                        display_funct.screen_width = 1280
-                        display_funct.screen_height = 720
-                        image_scale()
-                        pygame.display.set_mode((screen_width,screen_height))
+                        width = 1280
+                        height = 720
+                        if width == screen_width and height == screen_height:
+                            pass
+                        else:
+                            display_funct.screen_width = width 
+                            display_funct.screen_height = height 
+                            image_scale()
+                            pygame.display.set_mode((screen_width,screen_height))
                     elif selected_option == "close":
                         display_funct.setting = False
         pygame.display.flip()
@@ -654,6 +659,16 @@ full_on_button = pygame.transform.scale(full_on_image, (display_funct.screen_wid
 
 
 def image_scale():
+    #타이틀
+    display_funct.titlestart_button = pygame.transform.scale(titlestart_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleoption_button = pygame.transform.scale(titleoption_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleexit_button = pygame.transform.scale(titleexit_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+
+    #타이틀_ON
+    display_funct.titlestart_on_button = pygame.transform.scale(titlestart_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleoption_on_button = pygame.transform.scale(titleoption_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleexit_on_button = pygame.transform.scale(titleexit_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+
     #ESC
     display_funct.setting_button = pygame.transform.scale(setting_image, (display_funct.screen_width/16,display_funct.screen_height/9))
     display_funct.title_button = pygame.transform.scale(title_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
