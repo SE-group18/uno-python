@@ -2,9 +2,13 @@ import game_classes
 import pygame
 from pygame.locals import *
 import display_funct
-import game_control
 
 pygame.init()
+
+option = False
+setting = False
+title = True
+i = 0
 
 # global screen vairable to be used globaly (as all parts of the game
 # refrence the same screen)
@@ -376,7 +380,7 @@ def draw_winners(winners):
 ################################################## ESC 화면 ############################################################
 def esc_screen():
     selected_button = "resume"
-    while game_control.option == True:
+    while display_funct.option == True:
         green = (0,0,0)
         display_funct.screen.fill(green)
         display_funct.screen.blit(resume_button,(display_funct.screen_width*3/16,display_funct.screen_height*4/9))
@@ -393,13 +397,12 @@ def esc_screen():
         elif selected_button == "exit":
             display_funct.screen.blit(exit_on_button,(display_funct.screen_width*12/16,display_funct.screen_height*4/9))
         
-        if game_control.title == True:
+        if display_funct.title == True:
             title_screen()
 
-        elif game_control.setting == True:
-            print(game_control.setting)
+        elif display_funct.setting == True:
             setting_screen()
-            print(game_control.setting)
+            continue
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -408,7 +411,7 @@ def esc_screen():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
                     if selected_button == "resume":
-                        pass
+                        selected_button = "exit"
                     elif selected_button == "title":
                         selected_button = "resume"
                     elif selected_button == "setting":
@@ -424,19 +427,20 @@ def esc_screen():
                     elif selected_button == "setting":
                         selected_button = "exit"
                     elif selected_button == "exit":
-                        pass
+                        selected_button = "resume"
 
                 elif event.key == pygame.K_UP:
                     if selected_button == "resume":
-                        game_control.i = 1
-                        game_control.option = False
+                        display_funct.i = 1
+                        display_funct.option = False
                     elif selected_button == "title":
-                        game_control.title = True
+                        display_funct.title = True
                         
                     elif selected_button == "setting":
-                        game_control.setting = True
+                        display_funct.setting = True
 
                     elif selected_button == "exit":
+                        pygame.display.quit()
                         pygame.quit()
                         exit()
                         
@@ -445,9 +449,14 @@ def esc_screen():
         
 ############################################### 옵션 화면 #############################################
 def setting_screen():
-    while game_control.setting == True:
+    while display_funct.setting == True:
         green = (0,0,0)
         screen.fill(green)
+        screen.blit(option_1, (display_funct.screen_width*5/16,display_funct.screen_height*1/24))
+        screen.blit(soundon_button, (display_funct.screen_width*8/16,display_funct.screen_height*2/3))
+        screen.blit(small_button, (display_funct.screen_width*8/16,display_funct.screen_height*1/6))
+        screen.blit(med_button, (display_funct.screen_width*8/16,display_funct.screen_height*2/6))
+        screen.blit(full_button, (display_funct.screen_width*8/16,display_funct.screen_height*3/6))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -458,8 +467,15 @@ def setting_screen():
                     display_funct.screen_height =720
                     image_scale(screen_width,screen_height)
                     pygame.display.set_mode((screen_width,screen_height))
-                    game_control.setting = False
-                    break
+
+                elif event.key == pygame.K_DOWN:
+                    display_funct.screen_width = 1920
+                    display_funct.screen_height = 1080
+                    image_scale(screen_width,screen_height)
+                    pygame.display.set_mode((screen_width,screen_height))
+
+                elif event.key == pygame.K_SPACE:
+                    display_funct.setting = False
         pygame.display.update()
 
 ################################################# 시작 화면 ################################################
@@ -488,127 +504,150 @@ def create_button(x, y, width, height, text):
 
 # 게임 루프
 def title_screen():
-    screen.fill(black)
-    # 버튼 생성
     start_button = create_button(screen_width//2-screen_width/8, screen_height/2, screen_width/4, screen_height/12, "Start Game")
     options_button = create_button(screen_width//2-screen_width/8, screen_height/1.5, screen_width/4, screen_height/12, "Options")
     quit_button = create_button(screen_width//2-screen_width/8, screen_height/1.2, screen_width/4, screen_height/12, "Quit")
-
-    # 선택된 버튼
+    
     selected_button_list = [start_button,options_button,quit_button]
     selected_button = start_button
-    pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button, 1)
-    
-#    버튼 색변경
+    #    버튼 색변경
     def change_color(index1,index2):
         pygame.draw.rect(screen, BUTTON_COLOR, selected_button_list[index1], 1)
         pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button_list[index2], 1)
 
-    while game_control.title:   
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    # 위쪽 방향키 클릭 시
-                    if selected_button == start_button:
-                        selected_button = quit_button
-                        change_color(0,-1)
-                                            
-                    elif selected_button == options_button:
-                        selected_button = start_button
-                        change_color(1,0)
-                    else:
-                        selected_button = options_button
-                        change_color(2,1)
-                elif event.key == pygame.K_DOWN:
-                    # 아래쪽 방향키 클릭 시
-                    if selected_button == start_button:
-                        selected_button = options_button
-                        change_color(0,1)
-                    elif selected_button == options_button:
-                        selected_button = quit_button
-                        change_color(1,2)
-                    else:
-                        selected_button = start_button
-                        change_color(2,0)
-                elif event.key == pygame.K_RIGHT: #우측키로 변경
-                    if selected_button == start_button:
-                        game_control.title = False
-                        print("Start Game")
-                    elif selected_button == options_button:
-                        # Options 버튼 클릭 시 실행할 코드
-                        print("Options")
-                    elif selected_button == quit_button:
-                        # Quit 버튼 클릭 시 실행할 코드
-                        pygame.quit()
-                        exit()
-            
-            elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
-                if event.button == 1:
-                    click_x, click_y = event.pos
-                    
-                    #Start 버튼
-                    if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                    screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
-                        print('START')
-                        pass
-                        #Option 버튼
-                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                        screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
-                        print('OPTION')
-                        pass
-                        
-                            
-                        #Quit 버튼
-                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                    screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
-                        print('QUIT')
-                        pygame.quit()
-                        exit()
+    while display_funct.title: 
 
-        pygame.display.update()
+        if display_funct.setting == True:
+            setting_screen() #그전 버튼 안없어지는 현상 발생
+            
+        else:
+            screen.fill(black)
+            # 버튼 생성
+            start_button = create_button(screen_width//2-screen_width/8, screen_height/2, screen_width/4, screen_height/12, "Start Game")
+            options_button = create_button(screen_width//2-screen_width/8, screen_height/1.5, screen_width/4, screen_height/12, "Options")
+            quit_button = create_button(screen_width//2-screen_width/8, screen_height/1.2, screen_width/4, screen_height/12, "Quit")
+
+            # 선택된 버튼
+            pygame.draw.rect(screen, BUTTON_SELECTED_COLOR, selected_button, 1)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        # 위쪽 방향키 클릭 시
+                        if selected_button == start_button:
+                            selected_button = quit_button
+                            change_color(0,-1)
+                                                
+                        elif selected_button == options_button:
+                            selected_button = start_button
+                            change_color(1,0)
+                        else:
+                            selected_button = options_button
+                            change_color(2,1)
+                    elif event.key == pygame.K_DOWN:
+                        # 아래쪽 방향키 클릭 시
+                        if selected_button == start_button:
+                            selected_button = options_button
+                            change_color(0,1)
+                        elif selected_button == options_button:
+                            selected_button = quit_button
+                            change_color(1,2)
+                        else:
+                            selected_button = start_button
+                            change_color(2,0)
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_KP_ENTER or event.key == pygame.K_SPACE: #우측키 스페이스 엔터
+                        if selected_button == start_button:
+                            display_funct.title = False
+
+                        elif selected_button == options_button:
+                            # Options 버튼 클릭 시 실행할 코드
+                            pygame.draw.rect(screen, BUTTON_COLOR, selected_button, 1)
+                            display_funct.setting = True
+
+                        elif selected_button == quit_button:
+                            # Quit 버튼 클릭 시 실행할 코드
+                            pygame.quit()
+                            exit()
+                        else:
+                            pass
+                
+                elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
+                    if event.button == 1:
+                        click_x, click_y = event.pos
+                        
+                        #Start 버튼
+                        if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                        screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                            pass
+                            #Option 버튼
+                        elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                            screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                            pass
+                            
+                                
+                            #Quit 버튼
+                        elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                        screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                            pygame.quit()
+                            exit()
+
+            pygame.display.update()
 
 
     
 
 #이미지 파일
 #기본 파일
-setting = pygame.image.load("setting.png")
-title = pygame.image.load("title.png")
-resume = pygame.image.load("resume.png")
-exit = pygame.image.load("exit.png")
+setting_image = pygame.image.load("setting.png")
+title_image = pygame.image.load("title.png")
+resume_image = pygame.image.load("resume.png")
+exit_image = pygame.image.load("exit.png")
+option_image = pygame.image.load("option.png")
+soundon_image = pygame.image.load("soundon.png")
+small_image = pygame.image.load("small.png")
+med_image = pygame.image.load("med.png")
+full_image = pygame.image.load("full.png")
 
-resume_on = pygame.image.load("resume_on.png")
-title_on = pygame.image.load("title_on.png")
-setting_on = pygame.image.load("setting_on.png")
-exit_on = pygame.image.load("exit_on.png")
+resume_on_image = pygame.image.load("resume_on.png")
+title_on_image = pygame.image.load("title_on.png")
+setting_on_image = pygame.image.load("setting_on.png")
+exit_on_image = pygame.image.load("exit_on.png")
+soundon_on_image = pygame.image.load("soundon_on.png")
+
+
 
 #해상도 파일
-setting_button = pygame.transform.scale(setting, (display_funct.screen_width/16,display_funct.screen_height/9))
-title_button = pygame.transform.scale(title, (display_funct.screen_width/16,display_funct.screen_height/9)) 
-resume_button = pygame.transform.scale(resume, (display_funct.screen_width/16,display_funct.screen_height/9))
-exit_button = pygame.transform.scale(exit, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+setting_button = pygame.transform.scale(setting_image, (display_funct.screen_width/16,display_funct.screen_height/9))
+title_button = pygame.transform.scale(title_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+resume_button = pygame.transform.scale(resume_image, (display_funct.screen_width/16,display_funct.screen_height/9))
+exit_button = pygame.transform.scale(exit_image, (display_funct.screen_width/16,display_funct.screen_height/9))
+option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*3/8,display_funct.screen_height*11/12))
+soundon_button = pygame.transform.scale(soundon_image, (display_funct.screen_width/16,display_funct.screen_height/9))
 
-resume_on_button = pygame.transform.scale(resume_on, (display_funct.screen_width/16,display_funct.screen_height/9)) 
-title_on_button = pygame.transform.scale(title_on, (display_funct.screen_width/16,display_funct.screen_height/9)) 
-setting_on_button = pygame.transform.scale(setting_on, (display_funct.screen_width/16,display_funct.screen_height/9)) 
-exit_on_button = pygame.transform.scale(exit_on, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+
+resume_on_button = pygame.transform.scale(resume_on_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+title_on_button = pygame.transform.scale(title_on_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+setting_on_button = pygame.transform.scale(setting_on_image, (display_funct.screen_width/16,display_funct.screen_height/9)) 
+exit_on_button = pygame.transform.scale(exit_on_image, (display_funct.screen_width/16,display_funct.screen_height/9))
+soundon_button = pygame.transform.scale(soundon_on_image, (display_funct.screen_width/16,display_funct.screen_height/9))
 
 def image_scale(screen_width, screen_height):
-    display_funct.setting = pygame.image.load("setting.png")
-    display_funct.title = pygame.image.load("title.png")
-    display_funct.resume = pygame.image.load("resume.png")
+    display_funct.setting_button = pygame.transform.scale(setting_image, (screen_width/16,screen_height/9))
+    display_funct.title_button = pygame.transform.scale(title_image, (screen_width/16,screen_height/9)) 
+    display_funct.resume_button = pygame.transform.scale(resume_image, (screen_width/16,screen_height/9)) 
 
-    display_funct.resume_on = pygame.image.load("resume_on.png")
-    display_funct.title_on = pygame.image.load("title_on.png")
-    display_funct.setting_on = pygame.image.load("setting_on.png")
+    display_funct.resume_on_button = pygame.transform.scale(resume_on_image, (screen_width/16,screen_height/9)) 
+    display_funct.title_on_button = pygame.transform.scale(title_on_image, (screen_width/16,screen_height/9)) 
+    display_funct.setting_on_button = pygame.transform.scale(setting_on_image, (screen_width/16,screen_height/9)) 
 
-    display_funct.setting_button = pygame.transform.scale(setting, (screen_width/16,screen_height/9))
-    display_funct.title_button = pygame.transform.scale(title, (screen_width/16,screen_height/9)) 
-    display_funct.resume_button = pygame.transform.scale(resume, (screen_width/16,screen_height/9)) 
+    display_funct.option_1 = pygame.transform.scale(option_image, (display_funct.screen_width*3/8,display_funct.screen_height*11/12))
+    display_funct.small_button = pygame.transform.scale(small_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+    display_funct.med_button = pygame.transform.scale(med_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
+    display_funct.full_button = pygame.transform.scale(full_image, (display_funct.screen_width*7/80,display_funct.screen_height*2/45))
 
-    display_funct.resume_on_button = pygame.transform.scale(resume_on, (screen_width/16,screen_height/9)) 
-    display_funct.title_on_button = pygame.transform.scale(title_on, (screen_width/16,screen_height/9)) 
-    display_funct.setting_on_button = pygame.transform.scale(setting_on, (screen_width/16,screen_height/9)) 
+    display_funct.soundon_button = pygame.transform.scale(soundon_image, (display_funct.screen_width/16,display_funct.screen_height/9))

@@ -2,11 +2,6 @@ import display_funct
 import os
 import pygame
 
-option = False
-setting = False
-title = False
-i = 0
-
 def get_keypress(event):
     """
     Main call function that grabs keypress events and returns logic values
@@ -70,6 +65,7 @@ def player_LR_selection_color(selected=None):
     turn_done = False
     if selected is None:
         selected = 0
+    
     for event in pygame.event.get():  # O(1)
         (select_L, select_R, select_UP) = get_keypress(event)  # O(1)
     if select_R or select_L:  # if  keystoke to pick card was entered
@@ -234,7 +230,10 @@ def player_LR_selection_hand(player, selected, board=None, allowed_card_list=Non
     select_UP = False
     update = False
     turn_done = False
-
+    if selected is None:
+        selected = 0
+        update =True
+        return (update, selected, turn_done)
     for event in pygame.event.get(): # O(1)
         (select_L, select_R, select_UP) = get_keypress(event) # O(1)
 
@@ -254,8 +253,6 @@ def player_LR_selection_hand(player, selected, board=None, allowed_card_list=Non
 
     elif select_UP:  # if  keystoke to play card was entered
         # catch for index nonetype error in allowed_card_list
-        if selected is None:
-            selected = 0
 
         selected = select_choose(player, board, allowed_card_list[selected]) # O(1)
         update = True

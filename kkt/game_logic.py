@@ -203,18 +203,16 @@ def intern_player_turn(board, deck, player, allowed_card_list, selected):
 
     while not update:
         #무한 루프
-        if game_control.option == True:
-            selected_button = "resume"
+        if display_funct.option == True:
             display_funct.esc_screen()
+            turn_done = False
+            update = True
+            return(update, selected, turn_done)
             continue
         else:
             key_pressed = pygame.key.get_pressed()
             if key_pressed[K_ESCAPE]:
-                game_control.option = True
-
-            if game_control.i == 1:
-                game_control.i = 0
-                pass
+                display_funct.option = True
                 
             (update, selected, turn_done) = game_control.player_LR_selection_hand(
                 player, selected, board, allowed_card_list)
