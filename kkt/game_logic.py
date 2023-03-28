@@ -4,7 +4,13 @@ import display_funct
 import game_control
 import Main_Decision_Tree
 import pygame
+import game_logic
 from pygame.locals import *
+
+pygame.init()
+game_font = pygame.font.Font(None, 40)
+total_time = 10
+start_ticks = 0
 
 # global list containing the winners in placement order
 global winners
@@ -160,6 +166,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
 
 def extern_player_turn(board, deck, player, players, turn):
     drop_again = True
+    game_logic.start_ticks=pygame.time.get_ticks()
     while drop_again:
         turn_done = False
         selected = None
@@ -193,7 +200,11 @@ def extern_player_turn(board, deck, player, players, turn):
 
 
 def intern_player_turn(board, deck, player, allowed_card_list, selected):
+
     update = False
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
+    timer = game_font.render("timer: " + str(int(total_time - elapsed_time)), True, (255,255,255))
+
     if allowed_card_list == []:
         player.grab_card(deck)
         selected = None
@@ -208,15 +219,22 @@ def intern_player_turn(board, deck, player, allowed_card_list, selected):
             turn_done = False
             update = True
             return(update, selected, turn_done)
-            continue
+            
         else:
+            pygame.draw.rect(display_funct.screen, (0,0,0), [200,200,150,100])
+            display_funct.screen.blit(timer, (200,200))
+            pygame.display.flip()
+            if int(total_time - elapsed_time) == 0:
+                turn_done = True
+                update = True
+                return(update, selected, turn_done)
             key_pressed = pygame.key.get_pressed()
             if key_pressed[K_ESCAPE]:
                 display_funct.option = True
                 
             (update, selected, turn_done) = game_control.player_LR_selection_hand(
                 player, selected, board, allowed_card_list)
-
+            
         return (update, selected, turn_done)
 
 
