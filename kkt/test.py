@@ -1,47 +1,46 @@
 import pygame
-import json
 
 pygame.init()
 
-#타이틀
+# 화면 설정
+display_width = 480
+display_height = 640
+screen = pygame.display.set_mode((display_width, display_height))
+pygame.display.set_caption("timer")
 
+# 폰트 설정
+game_font = pygame.font.Font(None, 40)
 
-# 화면 크기 및 제목 설정
-screen_width, screen_height = 1280, 720
+# FPS
+clock = pygame.time.Clock()
 
-#타이틀
-try:
-    with open("config.txt", "r") as f:
-        config = json.load(f)
-    screen_width = config["screen_width"]
-    screen_height = config["screen_height"]
-except:
-    pass
+# 시간 정보
+total_time = 10
+start_ticks = pygame.time.get_ticks()
 
-
-
-
-screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption("My Game")
-
-# 배경 이미지 불러오기
-"""
-background = pygame. image.load("test.png");
-screen.blit(background,(0,0));
-"""
-
-# 버튼 텍스트에 사용할 폰트 설정
-
-# 게임 루프
-while True:
-
+# 이벤트 루프
+running = True
+while running:
+    dt = clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+            running = False
 
-    # 전체화면의 screen_width와 screen_height 구하기
-    
+    # 경과 시간 계산
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
 
+    # 타이머
+    timer = game_font.render("timer: " + str(int(total_time - elapsed_time)), True, (255,255,255))
+
+    #경과 시간 표시
+    screen.fill((0,0,0))
+    screen.blit(timer, (10, 10))
+
+    if total_time - elapsed_time <= 0:
+        print("타임아웃")
+        running = False
 
     pygame.display.update()
+
+pygame.quit()
+
