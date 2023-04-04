@@ -15,6 +15,7 @@ def get_keypress(event):
     select_L = False
     select_R = False
     select_UP = False
+    select_DOWN =False
 
     if event.type == pygame.QUIT:
         os._exit(0)  # hard exit the program
@@ -31,7 +32,9 @@ def get_keypress(event):
         elif event.key == pygame.K_UP:
             select_UP = True
 
-    return (select_L, select_R, select_UP)
+        elif event.key == pygame.K_DOWN:
+            select_DOWN = True
+    return (select_L, select_R, select_UP, select_DOWN)
 
 
 ########################################################
@@ -61,13 +64,14 @@ def player_LR_selection_color(selected=None):
     select_L = False
     select_R = False
     select_UP = False
+    select_DOWN = False
     update = False
     turn_done = False
     if selected is None:
         selected = 0
     
     for event in pygame.event.get():  # O(1)
-        (select_L, select_R, select_UP) = get_keypress(event)  # O(1)
+        (select_L, select_R, select_UP, select_DOWN) = get_keypress(event)  # O(1)
     if select_R or select_L:  # if  keystoke to pick card was entered
 
         selectednew = select_move_color(select_L, select_R, selected)  # O(1)
@@ -85,6 +89,10 @@ def player_LR_selection_color(selected=None):
         update = True
         turn_done = True
 
+    if select_DOWN:
+        update = False
+        turn_done = True
+        #grab_card()
     return (update, selected, turn_done)
 
 
@@ -144,13 +152,14 @@ def player_LR_selection_target(players, selected=None):
     select_L = False
     select_R = False
     select_UP = False
+    select_DOWN =False
     update = False
     turn_done = False
 
     if selected is None:
         selected = 0
     for event in pygame.event.get():  # O(1)
-        (select_L, select_R, select_UP) = get_keypress(event)  # O(1)
+        (select_L, select_R, select_UP, select_DOWN) = get_keypress(event)  # O(1)
     if select_R or select_L:  # if  keystoke to pick card was entered
         selectednew = select_move_target(select_L, select_R, players, selected)  # O(1)
 
@@ -167,6 +176,10 @@ def player_LR_selection_target(players, selected=None):
         update = True
         turn_done = True
 
+    if select_DOWN:
+        update = False
+        turn_done = True
+        # grab_card()
     return (update, selected, turn_done)
 
 
@@ -228,14 +241,17 @@ def player_LR_selection_hand(player, selected, board=None, allowed_card_list=Non
     select_L = False
     select_R = False
     select_UP = False
+    select_DOWN = False
     update = False
     turn_done = False
+    grab=False
+
     if selected is None:
         selected = 0
         update =True
-        return (update, selected, turn_done)
+        return (update, selected, turn_done, grab)
     for event in pygame.event.get(): # O(1)
-        (select_L, select_R, select_UP) = get_keypress(event) # O(1)
+        (select_L, select_R, select_UP, select_DOWN) = get_keypress(event) # O(1)
 
     if select_R or select_L:  # if  keystoke to pick card was entered
 
@@ -258,5 +274,12 @@ def player_LR_selection_hand(player, selected, board=None, allowed_card_list=Non
         update = True
         turn_done = True
 
-    return (update, selected, turn_done)
+    elif select_DOWN: #grab_card
+        selected= None
+        update =True
+        turn_done = True
+        grab=True
+        
+    return (update, selected, turn_done, grab)
+
 ########################################################

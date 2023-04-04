@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import display_funct
 import json
+import game_logic
 
 pygame.init()
 
@@ -132,11 +133,20 @@ def draw_top_stack_card(board):
         top_card = board.card_stack[-1]
         top_card.rect = def_rect
         top_card.rect = top_card.rect.move(
-            (screen_width - card_width) // 2,
+            (screen_width - card_width) // 2 + (card_width//2)+(card_width//4),
             (screen_height - card_height) // 2)
 
         # blit top card of board onto center screen
         scale_card_blit(top_card.card_data, top_card.rect)
+
+
+def draw_stack_card(board):
+    stack_card = game_classes.Card(
+        "red", "small_cards/card_back.png", None)
+    stack_card.rect = stack_card.rect.move(
+            (screen_width - card_width) // 2 - (card_width//2)-(card_width//4),
+            (screen_height - card_height) // 2)
+    scale_card_blit(stack_card.card_data, stack_card.rect)
 
 
 def redraw_hand_visble(player, selected=None):
@@ -280,6 +290,9 @@ def redraw_screen(player_you, board, players_other):
     # draw the top card on the board
     draw_top_stack_card(board)  # O(1)
 
+    # draw stacked deck on the board
+    draw_stack_card(board)
+
     # refreshing the screen
     pygame.display.flip()  # O(1)?
 
@@ -405,6 +418,7 @@ def draw_winners(winners):
 def esc_screen():
     selected_button = "resume"
     while display_funct.option == True:
+        game_logic.elapsed_time = (pygame.time.get_ticks() - game_logic.start_ticks) / 1000
         green = (0,0,0)
         display_funct.screen.fill(green)
         display_funct.screen.blit(resume_button,(display_funct.screen_width*3/16,display_funct.screen_height*4/9))

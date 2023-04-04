@@ -12,7 +12,7 @@ while True:
         display_funct.title_screen()
 
     else:
-        board1 = game_classes.Board("board1") 
+        board1 = game_classes.Board("board1")  
 
         # initilizing a deck to be used within the game (3 copies are added to
         # each other)

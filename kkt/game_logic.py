@@ -11,7 +11,9 @@ pygame.init()
 game_font = pygame.font.Font(None, 40)
 total_time = 10
 start_ticks = 0
-
+elapsed_time = 0
+paused_time = 0
+paused = False
 # global list containing the winners in placement order
 global winners
 winners = []
@@ -146,7 +148,7 @@ def check_game_done(players):
 
         while 1:  # wait till the player exits out of the game
             for event in pygame.event.get():
-                (select_L, select_R, select_UP) = game_control.get_keypress(event)
+                (select_L, select_R, select_UP, select_DOWN) = game_control.get_keypress(event)
 
                 if select_UP:
                     # clear winners for next game
@@ -202,8 +204,10 @@ def extern_player_turn(board, deck, player, players, turn):
 def intern_player_turn(board, deck, player, allowed_card_list, selected):
 
     update = False
-    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000
-    timer = game_font.render("timer: " + str(int(total_time - elapsed_time)), True, (255,255,255))
+    game_logic.elapsed_time = (pygame.time.get_ticks() - game_logic.start_ticks) / 1000
+    print(game_logic.paused_time)
+    time = int(total_time - game_logic.elapsed_time + game_logic.paused_time)
+    timer = game_font.render("timer: " + str(time), True, (255,255,255))
 
     if allowed_card_list == []:
         player.grab_card(deck)
@@ -215,7 +219,13 @@ def intern_player_turn(board, deck, player, allowed_card_list, selected):
     while not update:
         #무한 루프
         if display_funct.option == True:
+            pause_time = pygame.time.get_ticks()
             display_funct.esc_screen()
+            if game_logic.paused == True:
+                pausing_time = pygame.time.get_ticks()
+                game_logic.paused = False
+            game_logic.paused_time = game_logic.paused_time + (pausing_time - pause_time) / 1000
+            print(paused_time)
             turn_done = False
             update = True
             return(update, selected, turn_done)
@@ -224,17 +234,23 @@ def intern_player_turn(board, deck, player, allowed_card_list, selected):
             pygame.draw.rect(display_funct.screen, (0,0,0), [200,200,150,100])
             display_funct.screen.blit(timer, (200,200))
             pygame.display.flip()
-            if int(total_time - elapsed_time) == 0:
-                turn_done = True
-                update = True
+            if time == 0:
+                player.grab_card(deck)
+                turn_done=True
+                update=True
                 return(update, selected, turn_done)
             key_pressed = pygame.key.get_pressed()
             if key_pressed[K_ESCAPE]:
+                game_logic.paused = True
                 display_funct.option = True
                 
-            (update, selected, turn_done) = game_control.player_LR_selection_hand(
+            (update, selected, turn_done, grab) = game_control.player_LR_selection_hand(
                 player, selected, board, allowed_card_list)
             
+        
+            if(grab):
+                player.grab_card(deck)
+
         return (update, selected, turn_done)
 
 
@@ -256,7 +272,7 @@ def game_loop(board, deck, players):
     turn = 0
     turn_tot = 0
     drop_again = False
-
+    board.update_Board(deck.grab_card())
     while True:
         player = players[turn]
         turn_tot += 1
