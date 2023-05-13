@@ -274,6 +274,10 @@ def redraw_hand_visble(player, selected=None):
     """
     # player playing indicator placeholder graphic
     player_num = str(player.name[7])
+<<<<<<< HEAD
+=======
+    # 노란색 순서 표시 추가 2023/5/13
+>>>>>>> 3b04d00d77edd11a4e42de945271a035c2e4c105
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -319,6 +323,7 @@ def redraw_hand_nonvisble(player, start_horz, start_vert=0):
     """
     # placeholder player num graphics
     player_num = str(player.name[7])
+    # 노란색 순서 표시 추가
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -1757,7 +1762,11 @@ def single_screen():
 
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
+<<<<<<< HEAD
     player1.grab_cards(deck1, 5)
+=======
+    player1.grab_cards(deck1, 7)
+>>>>>>> 3b04d00d77edd11a4e42de945271a035c2e4c105
 
     playerAI_list = []
 
