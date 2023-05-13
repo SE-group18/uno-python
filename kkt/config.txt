@@ -1,1 +1,0 @@
-{"screen_width": 1600, "screen_height": 900, "sound_option": "off", "color_option": "off", "full": false}
