@@ -15,7 +15,6 @@ def main():
     display_funct.instorymode = False
     game_logic.uno_clicked = False
     display_funct.achieve_title = False
-    print(display_funct.cont3_true )
 
     while True:
         # initilizing the board to be used within the game
