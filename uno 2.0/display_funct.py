@@ -54,6 +54,11 @@ stack = 0
 first_victory = False
 #cleared1, cleared2, cleared3, cleared4
 turn10 = False
+fair = 0
+first_defeat = False
+stroke5 = 0
+cont3 = 0
+cont3_true = False
 
 #업적 달성
 first_victory_achieve_check = 0
@@ -66,6 +71,7 @@ fair_check = 0
 unoother_check = 0
 first_defeat_check =0
 stroke5_check = 0
+cont3_check = 0
 
 #업적 날짜
 first_victory_date = 0
@@ -78,6 +84,7 @@ fair_date = 0
 unoother_date = 0
 first_defeat_date = 0
 stroke5_date = 0
+cont3_date = 0
 
 try:
     with open("achievement.txt", "r") as fa:
@@ -93,6 +100,7 @@ try:
     unoother_check = config_ach["unoother_check"]
     first_defeat_check = config_ach["first_defeat_check"]
     stroke5_check = config_ach["stroke5_check"]
+    cont3_check = config_ach["cont3_check"]
 
     #업적 날짜
     first_victory_date = config_ach["first_victory_date"]
@@ -105,6 +113,7 @@ try:
     unoother_date = config_ach["unoother_date"]
     first_defeat_date = config_ach["first_defeat_date"]
     stroke5_date = config_ach["stroke5_date"]
+    cont3_date = config_ach["cont3_date"]
     
 except:
     print("achieve passed")
@@ -265,8 +274,12 @@ def redraw_hand_visble(player, selected=None):
     """
     # player playing indicator placeholder graphic
     player_num = str(player.name[7])
-    card_disp = game_classes.Card(
-        "red", "small_cards/red_" + player_num + ".png", None)
+    if turn_turn == player.name:
+        card_disp = game_classes.Card(
+            "red", "small_cards/yellow_" + player_num + ".png", None)
+    else:
+        card_disp = game_classes.Card(
+            "red", "small_cards/red_" + player_num + ".png", None)
     card_disp.rect = card_disp.rect.move(0, screen_height - card_height)
 
     # dynamic card spacing
@@ -517,11 +530,11 @@ def redraw_screen_menu_target(players, selected=None):
     pygame.display.flip()
 
 
-def draw_winners(winners):
+def draw_winners(winners, turn_tot):
     """
     Function that draws the winners in win placement from left to right.
     Left being the first winner and right being last place.
-
+ 
     O(n) runtime where n is the size of the list winners
     """
     # clear screen (top half)
@@ -545,11 +558,19 @@ def draw_winners(winners):
 
             if display_funct.instorymode == False:
                 display_funct.first_victory = True
+                display_funct.stroke5 += 1
+                
+                if turn_tot/display_funct.player_total <= 10:
+                    display_funct.turn10 = True
 
             with open("config.txt", "w") as f:
                 json.dump(config, f)
 
         else:
+            display_funct.stroke5 = 0
+            display_funct.first_defeat = True
+            display_funct.cont3_true = False
+
             screen.blit(resultlose_button,(screen_width*328.5/1600,screen_height/9))
             display_funct.loseplay.play()
         break
@@ -1182,7 +1203,7 @@ def achieve_screen():
                 screen.blit(cur_on_button, (display_funct.screen_width*935/1600, display_funct.screen_height*95/900))
 
             achieve_card = title_font.render('페어 플레이', True, (0, 0, 0))
-            achieve_card_text = text_font.render('-기술 카드 없이 승리', True, (0, 0, 0))
+            achieve_card_text = text_font.render('-기술카드 없이 승리', True, (0, 0, 0))
             screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*235/900))
             a_date = text_font.render(str(fair_date), True, (0, 0, 0))
             screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*265/900))
@@ -1199,7 +1220,7 @@ def achieve_screen():
                 screen.blit(b_date, (display_funct.screen_width*720/1600, display_funct.screen_height*420/900))
                 screen.blit(cur_on_button, (display_funct.screen_width*935/1600, display_funct.screen_height*355/900))
 
-            achieve_card = title_font.render('지금부터 시작', True, (0, 0, 0))
+            achieve_card = title_font.render('이제 시작', True, (0, 0, 0))
             achieve_card_text = text_font.render('-싱글플레이 패배', True, (0, 0, 0))
             screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*495/900))
             c_date = text_font.render(str(first_defeat_date), True, (0, 0, 0))
@@ -1216,6 +1237,16 @@ def achieve_screen():
             if stroke5_date != 0:
                 screen.blit(d_date, (display_funct.screen_width*720/1600, display_funct.screen_height*680/900))
                 screen.blit(cur_on_button, (display_funct.screen_width*935/1600, display_funct.screen_height*615/900))
+                
+        elif page == 3:
+            achieve_card = title_font.render('포 카드', True, (0, 0, 0))
+            achieve_card_text = text_font.render('-한 턴에 4장 내고 승리', True, (0, 0, 0))
+            screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*105/900))
+            achieve_card_date = text_font.render(str(turn10_date), True, (0, 0, 0))
+            screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*135/900))
+            if turn10_date != 0:
+                screen.blit(achieve_card_date, (display_funct.screen_width*720/1600, display_funct.screen_height*160/900))
+                screen.blit(cur_on_button, (display_funct.screen_width*935/1600, display_funct.screen_height*95/900))
 
         page_text = page_font.render(str(page), True, (255,255, 255))
         screen.blit(page_text, (display_funct.screen_width*790/1600, display_funct.screen_height*745/900))
@@ -1310,6 +1341,41 @@ def achieve_check():
         config_ach["d_victory_date"] = d_victory_date
         achieve_popup(achieve)
 
+    elif display_funct.turn10 == True and display_funct.turn10_check == 0:       #10턴 승리
+        achieve = "turn10"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.turn10_date = current_date
+        config_ach["turn10_date"] = turn10_date
+        achieve_popup(achieve)
+
+    elif display_funct.fair == True and display_funct.fair_check == 0:       #10턴 승리
+        achieve = "fair"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.fair_date = current_date
+        config_ach["fair_date"] = fair_date
+        achieve_popup(achieve)
+
+    elif display_funct.first_defeat == True and display_funct.first_defeat_check == 0:       #10턴 승리
+        achieve = "first_defeat"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.first_defeat_date = current_date
+        config_ach["first_defeat_date"] = first_defeat_date
+        achieve_popup(achieve)
+
+    elif display_funct.stroke5 >= 5 and display_funct.stroke5_check == 0:       #10턴 승리
+        achieve = "stroke5"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.stroke5_date = current_date
+        config_ach["stroke5_date"] = stroke5_date
+        achieve_popup(achieve)
+
+    elif display_funct.cont3_true == True and display_funct.cont3_check == 0:       #10턴 승리
+        achieve = "cont3"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.cont3_date = current_date
+        config_ach["cont3_date"] = cont3_date
+        achieve_popup(achieve)
+
     with open("achievement.txt", "w") as fa:
         json.dump(config_ach, fa)
 
@@ -1325,7 +1391,7 @@ def achieve_popup(what):
         achieve_card_text = text_font.render('-싱글 플레이 승리', True, (0, 0, 0))
         screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
         screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
-        if display_funct.stack > 800:
+        if display_funct.stack > 500:
             display_funct.first_victory_achieve_check = 1
             config_ach["first_check"] = 1
             display_funct.stack = 0
@@ -1336,7 +1402,7 @@ def achieve_popup(what):
         achieve_card_text = text_font.render('-A 지역 승리', True, (0, 0, 0))
         screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
         screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
-        if display_funct.stack > 800:
+        if display_funct.stack > 500:
             display_funct.a_victory_achieve_check = 1
             config_ach["a_check"] = 1
             display_funct.stack = 0
@@ -1347,7 +1413,7 @@ def achieve_popup(what):
         achieve_card_text = text_font.render('-B 지역 승리', True, (0, 0, 0))
         screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
         screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
-        if display_funct.stack > 800:
+        if display_funct.stack > 500:
             display_funct.b_victory_achieve_check = 1
             config_ach["b_check"] = 1
             display_funct.stack = 0
@@ -1358,7 +1424,7 @@ def achieve_popup(what):
         achieve_card_text = text_font.render('-C 지역 승리', True, (0, 0, 0))
         screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
         screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
-        if display_funct.stack > 800:
+        if display_funct.stack > 500:
             display_funct.c_victory_achieve_check = 1
             config_ach["c_check"] = 1
             display_funct.stack = 0
@@ -1369,9 +1435,62 @@ def achieve_popup(what):
         achieve_card_text = text_font.render('-D 지역 승리', True, (0, 0, 0))
         screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
         screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
-        if display_funct.stack > 800:
+        if display_funct.stack > 500:
             display_funct.d_victory_achieve_check = 1
             config_ach["d_check"] = 1
+            display_funct.stack = 0
+    
+    elif what == "turn10":
+        display_funct.stack += 1
+        achieve_card = title_font.render('전력질주', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-싱글플레이 10턴 안에 승리', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.turn10_check = 1
+            config_ach["turn10_check"] = 1
+            display_funct.stack = 0
+    elif what == "fair":
+        display_funct.stack += 1
+        achieve_card = title_font.render('페어 플레이', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-기술카드 없이 승리', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.fair_check = 1
+            config_ach["fair_check"] = 1
+            display_funct.stack = 0
+    elif what == "first_defeat":
+        display_funct.stack += 1
+        achieve_card = title_font.render('이제 시작', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-싱글플레이 첫 패배', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.first_defeat_check = 1
+            config_ach["first_defeat_check"] = 1
+            display_funct.stack = 0
+
+    elif what == "stroke5":
+        display_funct.stack += 1
+        achieve_card = title_font.render('실력자', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-싱글플레이 5연승', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.stroke5_check = 1
+            config_ach["stroke5_check"] = 1
+            display_funct.stack = 0
+
+    elif what == "cont3":
+        display_funct.stack += 1
+        achieve_card = title_font.render('포 카드', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-한 턴에 4장 내고 승리', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.cont3_check = 1
+            config_ach["cont3_check"] = 1
             display_funct.stack = 0
 
     with open("achievement.txt", "w") as fa:
@@ -1638,7 +1757,7 @@ def single_screen():
 
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
-    player1.grab_cards(deck1, 1)
+    player1.grab_cards(deck1, 5)
 
     playerAI_list = []
 
@@ -2054,12 +2173,6 @@ cur_on_button = pygame.transform.scale(cur_image, (display_funct.screen_width*40
 cleared_button = pygame.transform.scale(cleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
 notcleared_button = pygame.transform.scale(notcleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
 checkmap_button = pygame.transform.scale(checkmap_image, (display_funct.screen_width*400/1600,display_funct.screen_height*300/900))
-yellowcard1 = pygame.transform.scale(game_logic.yellowcard1_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard2 = pygame.transform.scale(game_logic.yellowcard2_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard3 = pygame.transform.scale(game_logic.yellowcard3_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard4 = pygame.transform.scale(game_logic.yellowcard4_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard5 = pygame.transform.scale(game_logic.yellowcard5_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard6 = pygame.transform.scale(game_logic.yellowcard6_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
 
 def image_scale():
     #타이틀
@@ -2155,12 +2268,6 @@ def image_scale():
     display_funct.cleared_button = pygame.transform.scale(cleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
     display_funct.notcleared_button = pygame.transform.scale(notcleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
     display_funct.checkmap_button = pygame.transform.scale(checkmap_image, (display_funct.screen_width*400/1600,display_funct.screen_height*300/900))
-    display_funct.yellowcard1 = pygame.transform.scale(game_logic.yellowcard1_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard2 = pygame.transform.scale(game_logic.yellowcard2_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard3 = pygame.transform.scale(game_logic.yellowcard3_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard4 = pygame.transform.scale(game_logic.yellowcard4_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard5 = pygame.transform.scale(game_logic.yellowcard5_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard6 = pygame.transform.scale(game_logic.yellowcard6_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
 
     display_funct.uno_button = pygame.transform.scale(uno_image, (display_funct.screen_width*64/1600,display_funct.screen_height*120/900))
     display_funct.uno_on_button = pygame.transform.scale(uno_on_image, (display_funct.screen_width*64/1600,display_funct.screen_height*120/900))

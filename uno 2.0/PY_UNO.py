@@ -8,13 +8,15 @@ import pygame
 pygame.display.set_caption("UNO!")
 # loop for allowing multiple games to be restarted
 def main():
+    display_funct.player_total = 0
     display_funct.title = True
     display_funct.setting = False
     display_funct.option = False
     display_funct.instorymode = False
     game_logic.uno_clicked = False
     display_funct.achieve_title = False
-    
+    print(display_funct.cont3_true )
+
     while True:
         # initilizing the board to be used within the game
         display_funct.title_screen()

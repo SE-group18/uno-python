@@ -119,7 +119,7 @@ def check_winners(player):
         winners.append(player)
 
 
-def check_game_done(players):
+def check_game_done(players, turn_tot):
     """
     Checks to see if the PY-UNO game is over (only one player left with cards).
     If so the last player with cards is appened to the winners list and then
@@ -137,6 +137,13 @@ def check_game_done(players):
     """
     global winners
 
+    print(display_funct.player_total)
+    if display_funct.fair == 0:
+        display_funct.fair = True
+
+    else:
+        display_funct.fair = 0
+
     if len(players) <= display_funct.player_total-1:
         print("\n\ngame done!!!!!")
         # adding last place
@@ -148,7 +155,7 @@ def check_game_done(players):
             print(place, player.name)
             place += 1
 
-        display_funct.draw_winners(winners)
+        display_funct.draw_winners(winners, turn_tot)
         winning = True
         while winning:  # wait till the player exits out of the game
             for event in pygame.event.get():
@@ -176,26 +183,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
                 pygame.quit()
                 exit()
 
-    if player.name == "player_2AI":
-        display_funct.screen.blit(display_funct.yellowcard2,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
-        pygame.time.delay(1000)
-    elif player.name == "player_3AI":
-        display_funct.screen.blit(display_funct.yellowcard3,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
-        pygame.time.delay(1000)
-    elif player.name == "player_4AI":
-        display_funct.screen.blit(display_funct.yellowcard4,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
-        pygame.time.delay(1000)
-    elif player.name == "player_5AI":
-        display_funct.screen.blit(display_funct.yellowcard5,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
-        pygame.time.delay(1000)
-    elif player.name == "player_6AI":
-        display_funct.screen.blit(display_funct.yellowcard6,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
-        pygame.time.delay(1000)
+    pygame.time.delay(800)
 
     increment_card_old_vals(player)  # O(n)
 
@@ -211,10 +199,13 @@ def extern_player_turn(board, deck, player, players, turn):
     drop_again = True
     game_logic.start_ticks=pygame.time.get_ticks()
     game_logic.paused_time = 0
+    display_funct.cont3 = 0
     while drop_again:
         turn_done = False
         selected = None
         grab = False
+        display_funct.cont3 += 1
+
         # redraw display at start of human turn
         display_funct.redraw_screen([(player, None)], board, players)
 
@@ -243,6 +234,8 @@ def extern_player_turn(board, deck, player, players, turn):
         else:
             drop_again = card_logic.card_played_type(board, deck,
                                                  player, players)
+        if display_funct.cont3 >= 4:
+            display_funct.cont3_true = True
 
     return (player, turn)
 
@@ -285,7 +278,6 @@ def intern_player_turn(board, deck, player,players, allowed_card_list, selected)
         else:
             pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
             display_funct.screen.blit(timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
-            display_funct.screen.blit(display_funct.yellowcard1,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
 
 
             #display_funct.screen.blit(display_funct.uno_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
@@ -371,6 +363,7 @@ def game_loop(board, deck, players):
     """
     for i in players:
         display_funct.player_total += 1
+
     board.turn_iterator = 1
     turn = 0
     turn_tot = 0
@@ -382,7 +375,11 @@ def game_loop(board, deck, players):
         print("Turn number:", turn_tot)
         print("PLAYER: ", player.name, "TURN")
         display_funct.turn_turn = player.name
-
+        a = len(players[0].hand)
+        for i in range(a):
+            if players[0].hand[i].name[0] == 'w':
+                display_funct.fair += 1
+            
         if player.skip:
             if player.AI:
                 increment_card_old_vals(player)
@@ -400,7 +397,7 @@ def game_loop(board, deck, players):
         # game. Also check if the game is done "only one player left".
         if player in winners:
             players.remove(player)
-            restart_bool = check_game_done(players)
+            restart_bool = check_game_done(players, turn_tot)
 
             # leaves this instance of the game logic loop back to PY-UNO start
             # in which a new game is started
@@ -421,6 +418,8 @@ def game_loop_C(board, deck, players):
     C지역 게임 모드입니다.
     
     """
+    for i in players:
+        display_funct.player_total += 1
     board.turn_iterator = 1
     turn = 0
     turn_tot = 0
@@ -428,9 +427,7 @@ def game_loop_C(board, deck, players):
     board.update_Board(deck.grab_card())
    
    
-    while True:
-        for i in players:
-            display_funct.player_total += 1
+    while True:  
         num=0
         player = players[turn]
         turn_tot += 1
@@ -499,11 +496,3 @@ def game_loop_C(board, deck, players):
         # iterate the turn
         turn = compute_turn(players, turn, board.turn_iterator)
 
-
-
-yellowcard1_image = pygame.image.load("small_cards/red_1.png")
-yellowcard2_image = pygame.image.load("small_cards/red_2.png")
-yellowcard3_image = pygame.image.load("small_cards/red_3.png")
-yellowcard4_image = pygame.image.load("small_cards/red_4.png")
-yellowcard5_image = pygame.image.load("small_cards/red_5.png")
-yellowcard6_image = pygame.image.load("small_cards/Red_6.png")
