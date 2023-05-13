@@ -175,26 +175,16 @@ def extern_AI_player_turn(board, deck, player, players, turn):
         if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
-
+# 빨강색 순서 표시 삭제 2023/5/13 - 신현우
     if player.name == "player_2AI":
-        display_funct.screen.blit(display_funct.yellowcard2,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
         pygame.time.delay(1000)
     elif player.name == "player_3AI":
-        display_funct.screen.blit(display_funct.yellowcard3,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
         pygame.time.delay(1000)
     elif player.name == "player_4AI":
-        display_funct.screen.blit(display_funct.yellowcard4,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
         pygame.time.delay(1000)
     elif player.name == "player_5AI":
-        display_funct.screen.blit(display_funct.yellowcard5,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
         pygame.time.delay(1000)
     elif player.name == "player_6AI":
-        display_funct.screen.blit(display_funct.yellowcard6,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
-        pygame.display.flip()
         pygame.time.delay(1000)
 
     increment_card_old_vals(player)  # O(n)
@@ -285,7 +275,6 @@ def intern_player_turn(board, deck, player,players, allowed_card_list, selected)
         else:
             pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
             display_funct.screen.blit(timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
-            display_funct.screen.blit(display_funct.yellowcard1,(display_funct.screen_width*1300/1600,display_funct.screen_height*500/900))
 
 
             #display_funct.screen.blit(display_funct.uno_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
@@ -498,12 +487,3 @@ def game_loop_C(board, deck, players):
 
         # iterate the turn
         turn = compute_turn(players, turn, board.turn_iterator)
-
-
-
-yellowcard1_image = pygame.image.load("small_cards/red_1.png")
-yellowcard2_image = pygame.image.load("small_cards/red_2.png")
-yellowcard3_image = pygame.image.load("small_cards/red_3.png")
-yellowcard4_image = pygame.image.load("small_cards/red_4.png")
-yellowcard5_image = pygame.image.load("small_cards/red_5.png")
-yellowcard6_image = pygame.image.load("small_cards/Red_6.png")

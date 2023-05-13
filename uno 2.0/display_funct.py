@@ -265,8 +265,13 @@ def redraw_hand_visble(player, selected=None):
     """
     # player playing indicator placeholder graphic
     player_num = str(player.name[7])
-    card_disp = game_classes.Card(
-        "red", "small_cards/red_" + player_num + ".png", None)
+    # 노란색 순서 표시 추가 2023/5/13
+    if turn_turn == player.name:
+        card_disp = game_classes.Card(
+            "red", "small_cards/yellow_" + player_num + ".png", None)
+    else:
+        card_disp = game_classes.Card(
+            "red", "small_cards/red_" + player_num + ".png", None)
     card_disp.rect = card_disp.rect.move(0, screen_height - card_height)
 
     # dynamic card spacing
@@ -306,6 +311,7 @@ def redraw_hand_nonvisble(player, start_horz, start_vert=0):
     """
     # placeholder player num graphics
     player_num = str(player.name[7])
+    # 노란색 순서 표시 추가
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -1638,7 +1644,7 @@ def single_screen():
 
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
-    player1.grab_cards(deck1, 1)
+    player1.grab_cards(deck1, 7)
 
     playerAI_list = []
 
@@ -2054,12 +2060,6 @@ cur_on_button = pygame.transform.scale(cur_image, (display_funct.screen_width*40
 cleared_button = pygame.transform.scale(cleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
 notcleared_button = pygame.transform.scale(notcleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
 checkmap_button = pygame.transform.scale(checkmap_image, (display_funct.screen_width*400/1600,display_funct.screen_height*300/900))
-yellowcard1 = pygame.transform.scale(game_logic.yellowcard1_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard2 = pygame.transform.scale(game_logic.yellowcard2_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard3 = pygame.transform.scale(game_logic.yellowcard3_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard4 = pygame.transform.scale(game_logic.yellowcard4_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard5 = pygame.transform.scale(game_logic.yellowcard5_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-yellowcard6 = pygame.transform.scale(game_logic.yellowcard6_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
 
 def image_scale():
     #타이틀
@@ -2155,12 +2155,6 @@ def image_scale():
     display_funct.cleared_button = pygame.transform.scale(cleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
     display_funct.notcleared_button = pygame.transform.scale(notcleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
     display_funct.checkmap_button = pygame.transform.scale(checkmap_image, (display_funct.screen_width*400/1600,display_funct.screen_height*300/900))
-    display_funct.yellowcard1 = pygame.transform.scale(game_logic.yellowcard1_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard2 = pygame.transform.scale(game_logic.yellowcard2_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard3 = pygame.transform.scale(game_logic.yellowcard3_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard4 = pygame.transform.scale(game_logic.yellowcard4_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard5 = pygame.transform.scale(game_logic.yellowcard5_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
-    display_funct.yellowcard6 = pygame.transform.scale(game_logic.yellowcard6_image, (display_funct.screen_width*70/1600,display_funct.screen_height*98/900))
 
     display_funct.uno_button = pygame.transform.scale(uno_image, (display_funct.screen_width*64/1600,display_funct.screen_height*120/900))
     display_funct.uno_on_button = pygame.transform.scale(uno_on_image, (display_funct.screen_width*64/1600,display_funct.screen_height*120/900))
