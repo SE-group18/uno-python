@@ -243,20 +243,6 @@ def extern_player_turn(board, deck, player, players, turn):
             update = check_update(board, allowed_card_list, selected,
                                   player, players, update)
 
-        if len(player.hand) == 1:
-            playing_1 = True
-            while playing_1:
-                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        exit()
-                    elif event.type == pygame.KEYDOWN:
-                        if event.key == display_funct.space:
-                            playing_1 = False
-                pygame.display.flip()
-
-        display_funct.redraw_screen([(player, None)], board, players)
 
         # returns false unless a drop_again type card is played
         if (grab==True):
@@ -271,6 +257,24 @@ def extern_player_turn(board, deck, player, players, turn):
         if display_funct.cont3 >= 4:
             display_funct.cont3_true = True
 
+        if len(player.hand) == 1:
+            display_funct.redraw_screen([(player, None)], board, players)
+            playing_1 = True
+            while playing_1:
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == display_funct.space:
+                            playing_1 = False
+                            
+                pygame.display.flip()
+
+        display_funct.redraw_screen([(player, None)], board, players)
+
     return (player, turn)
 
 
@@ -281,8 +285,6 @@ def intern_player_turn(board, deck, player,players, allowed_card_list, selected)
     game_logic.elapsed_time = (pygame.time.get_ticks() - game_logic.start_ticks) / 1000
     time = int(total_time - game_logic.elapsed_time + game_logic.paused_time)
     timer = game_font.render("timer: " + str(time), True, (255,255,255))
-    space = False
-    who = ""
 
     if allowed_card_list == []:
         print("bug")
