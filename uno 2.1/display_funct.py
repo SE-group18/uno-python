@@ -997,6 +997,7 @@ def setting_screen():
                     
                 elif event.key == display_funct.esc:
                     display_funct.setting = False
+
     
             with open("config.txt", "w") as f:
                 json.dump(config, f)
@@ -1567,8 +1568,9 @@ def title_single():
 
 def title_multi():
     selected_multi = 'host'
-    title_multi = True
-    while title_multi:
+    title_mul = True
+    pass_font = pygame.font.SysFont('malgungothic', 20)
+    while title_mul:
         screen.blit(titlehost_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
         screen.blit(titleclient_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*525/900))
 
@@ -1597,10 +1599,73 @@ def title_multi():
 
                 elif event.key == display_funct.space:
                     if selected_multi == 'host':
-                        pass
+                        done = False
+                        password = ''
+                        input_pw = pass_font.render("Input Password", True, (255, 255, 255))
+                        while not done:
+                            password_1 = pass_font.render(password, True, (255, 255, 255))
+                            pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,150,60])
+                            screen.blit(input_pw,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                            screen.blit(password_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_RETURN:
+                                        if len(password) != 4:
+                                            pass
+                                        else:
+                                            title_mul = False
+                                            display_funct.host_screen(password)
 
+                                    elif event.key == display_funct.esc:
+                                        done = True
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,150,60])
+                                    
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        password = password[:-1]
+
+                                    else:
+                                        if len(password) > 3:
+                                            pass
+                                        else:
+                                            password += event.unicode
+                            pygame.display.flip()
                     elif selected_multi == 'client':
-                        pass
+                        done = False
+                        ip = ''
+                        input_ip = pass_font.render("Input IP", True, (255, 255, 255))
+                        while not done:
+                            ip_1 = pass_font.render(ip, True, (255, 255, 255))
+                            pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
+                            screen.blit(input_ip,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                            screen.blit(ip_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_RETURN:
+                                        if ip == '':
+                                            pass
+                                        else:
+                                            title_mul = False
+                                            display_funct.host_screen(ip)
+
+                                    elif event.key == display_funct.esc:
+                                        done = True
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
+                                    
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        ip = ip[:-1]
+
+                                    else:
+                                        if len(ip) > 20:
+                                            pass
+                                        else:
+                                            ip += event.unicode
+                            pygame.display.flip()
 
                 elif event.key == display_funct.esc or event.key == display_funct.left:
                     title_multi = False
@@ -1735,6 +1800,7 @@ def single_screen():
     player_font = pygame.font.SysFont('malgungothic', 25)
     i=0
     playing = True
+    player1_name = "Player1"
     while playing:
         screen.fill(black)
         screen.blit(singleoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
@@ -1752,7 +1818,8 @@ def single_screen():
         for a in selected_ais:
             if a != "no":
                 i+=1
-        player1 = player_font.render('Player1', True, (255, 255, 255))
+        
+        player1 = player_font.render(player1_name, True, (255, 255, 255))
         area = player_font.render('AI', True, (255, 255, 255))
         area_a = player_font.render('AI_A', True, (255, 255, 255))
 
@@ -1842,8 +1909,28 @@ def single_screen():
 
                 elif event.key == display_funct.space:
                     if selected_button1 == "ai1":
-                        #이름 바꾸기
-                        pass
+                        done = False
+                        while not done:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+
+                                if event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_RETURN:
+                                        done = True
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        player1_name = player1_name[:-1]
+                                    else:
+                                        if len(player1_name) > 6:
+                                            pass
+                                        else:
+                                            player1_name += event.unicode
+                            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*185/900))
+                            player1 = player_font.render(player1_name, True, (255, 255, 255))
+                            screen.blit(player1, (display_funct.screen_width*755/1600, display_funct.screen_height*200/900))
+                            pygame.display.flip()
+                                        
                     elif selected_button1 == "ai2":
                         if selected_ai2 == "no": 
                             selected_ai2 = "area"
@@ -2055,6 +2142,7 @@ def story_screen():
 
         achieve_check()
         pygame.display.flip()
+
     ####################### 스테이지 시작##################
 
     if display_funct.title:
@@ -2121,7 +2209,191 @@ def story_screen():
     
 
 
+###################################### 멀티 방 #############################################
+def host_screen(password):
+    selected_button1 = "ai1"
+    selected_ai2 = "no"
+    selected_ai3 = "no"
+    selected_ai4 = "no"
 
+    player_font = pygame.font.SysFont('malgungothic', 25)
+    i=0
+    playing = True
+    player1_name = "Player1"
+    while playing:
+        screen.fill(black)
+        screen.blit(achieveoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
+        screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*185/900))
+        screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*305/900))
+        screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*425/900))
+        screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*545/900))
+        screen.blit(singlestart_button, (screen_width*677.5/1600,screen_height*690/900))
+
+        selected_ais = [selected_ai2,selected_ai3,selected_ai4]
+        i = 0
+
+        for a in selected_ais:
+            if a != "no":
+                i+=1
+        
+        player1 = player_font.render(player1_name, True, (255, 255, 255))
+        area = player_font.render('AI', True, (255, 255, 255))
+        area_a = player_font.render('AI_A', True, (255, 255, 255))
+
+        
+        if selected_button1 == "ai1":
+            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*185/900))
+        elif selected_button1 == "ai2":
+            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*305/900))
+        elif selected_button1 == "ai3":
+            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*425/900))
+        elif selected_button1 == "ai4":
+            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*545/900))
+
+        elif selected_button1 == "start":
+            screen.blit(singlestart_on_button, (screen_width*677.5/1600,screen_height*690/900))
+
+        screen.blit(player1, (display_funct.screen_width*755/1600, display_funct.screen_height*200/900))
+        if selected_ai2 == "area":
+            screen.blit(area, (display_funct.screen_width*785/1600, display_funct.screen_height*320/900))
+        elif selected_ai2 == "area_a":
+            screen.blit(area_a, (display_funct.screen_width*770/1600, display_funct.screen_height*320/900))
+        
+        if selected_ai3 == "area":
+            screen.blit(area, (display_funct.screen_width*785/1600, display_funct.screen_height*440/900))
+        elif selected_ai3 == "area_a":
+            screen.blit(area_a, (display_funct.screen_width*770/1600, display_funct.screen_height*440/900))
+        
+        if selected_ai4 == "area":
+            screen.blit(area, (display_funct.screen_width*785/1600, display_funct.screen_height*560/900))
+        elif selected_ai4 == "area_a":
+            screen.blit(area_a, (display_funct.screen_width*770/1600, display_funct.screen_height*560/900))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == display_funct.up:
+                    # 위쪽 방향키 클릭 시
+
+                    if selected_button1 == "ai1":
+                        pass 
+                    elif selected_button1 == "ai2":
+                        selected_button1 = "ai1"
+                    elif selected_button1 == "ai3":
+                        selected_button1 = "ai2"
+                    elif selected_button1 == "ai4":
+                        selected_button1 = "ai3"
+                    elif selected_button1 == "start":
+                        selected_button1 = "ai4"
+
+                elif event.key == display_funct.down:
+                    if selected_button1 == "ai1":
+                        selected_button1 = "ai2"
+                    elif selected_button1 == "ai2":
+                        selected_button1 = "ai3"
+                    elif selected_button1 == "ai3":
+                        selected_button1 = "ai4"
+                    elif selected_button1 == "ai4":
+                        selected_button1 = "start"
+                    elif selected_button1 == "start":
+                        pass
+
+                elif event.key == display_funct.space:
+                    if selected_button1 == "ai1":
+                        done = False
+                        while not done:
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+
+                                if event.type == pygame.KEYDOWN:
+                                    if event.key == pygame.K_RETURN:
+                                        done = True
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        player1_name = player1_name[:-1]
+                                    else:
+                                        if len(player1_name) > 6:
+                                            pass
+                                        else:
+                                            player1_name += event.unicode
+                            screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*185/900))
+                            player1 = player_font.render(player1_name, True, (255, 255, 255))
+                            screen.blit(player1, (display_funct.screen_width*755/1600, display_funct.screen_height*200/900))
+                            pygame.display.flip()
+                                        
+                    elif selected_button1 == "ai2":
+                        if selected_ai2 == "no": 
+                            selected_ai2 = "area"
+                        elif selected_ai2 == "area":
+                            selected_ai2 = "area_a"
+                        elif selected_ai2 == "area_a":
+                            selected_ai2 = "no"
+
+                    elif selected_button1 == "ai3":
+                        if selected_ai3 == "no":
+                            selected_ai3 = "area"
+                        elif selected_ai3 == "area":
+                            selected_ai3 = "area_a"
+                        elif selected_ai3 == "area_a":
+                            selected_ai3 = "no"
+
+                    elif selected_button1 == "ai4":
+                        if selected_ai4 == "no":
+                            selected_ai4 = "area"
+                        elif selected_ai4 == "area":
+                            selected_ai4 = "area_a"
+                        elif selected_ai4 == "area_a":
+                            selected_ai4 = "no"
+
+                    elif selected_button1 == "start":
+                        if i == 0:
+                            pass
+                        else:
+                            playing = False
+
+                elif event.key == display_funct.esc:
+                    display_funct.title = True
+                    PY_UNO.main()
+
+
+        pygame.display.flip()
+
+    board1 = game_classes.Board("board1")  
+
+    # initilizing a deck to be used within the game (3 copies are added to
+    # each other)
+    deck1 = gen_rand_deck("deck1", 0)
+
+    # defining a 7 player uno game
+    player1 = game_classes.Player("player_1")
+    player1.grab_cards(deck1, 2)
+    playerAI_list = []
+
+    i=2
+    for a in selected_ais:
+
+        if a == "no":
+            pass
+
+        elif a == "area":
+            playerAI = game_AI.make_AI_basic(deck1, "player_"+str(i)+"AI", 7)
+            i+=1
+            playerAI_list.append(playerAI)
+
+        elif a == "area_a":
+            playerAI = game_AI.make_AI_A(deck1, "player_"+str(i)+"AI", 7)
+            i+=1
+            playerAI_list.append(playerAI)
+
+    display_funct.redraw_hand_visble(player1, None)
+    
+
+    # enters into playing the game
+    game_logic.game_loop(board1, deck1, [player1]+ playerAI_list)
+    
 
 
 

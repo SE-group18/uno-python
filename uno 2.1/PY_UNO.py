@@ -6,7 +6,7 @@ import game_logic
 import pygame
 
 pygame.display.set_caption("UNO!")
-# loop for allowing multiple games to be restarted
+# loop for allowing multiple games to be sda
 def main():
     display_funct.player_total = 0
     display_funct.title = True  
