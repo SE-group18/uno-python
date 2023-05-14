@@ -276,10 +276,7 @@ def redraw_hand_visble(player, selected=None):
     """
     # player playing indicator placeholder graphic
     player_num = str(player.name[7])
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -324,13 +321,10 @@ def redraw_hand_nonvisble(player, start_horz, start_vert=0):
     O(n) runtime where n is the size of the players hand
     """
     # placeholder player num graphics
-<<<<<<< HEAD
+
     player_num = str(player.name[7])
     # 노란색 순서 표시 추가
-=======
-    print("turn:"+turn_turn)
-    player_num = str(player.name[7])
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
+
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -1682,7 +1676,6 @@ def title_screen():
 
 ################################## 싱글플레이 ################################################
 def single_screen():
-<<<<<<< HEAD
     selected_button1 = "ai1"
     selected_ai2 = "no"
     selected_ai3 = "no"
@@ -1726,29 +1719,10 @@ def single_screen():
             screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*465/900))
         elif selected_button1 == "ai6":
             screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*535/900))
-=======
-    selected_button1 = "ai"
-    selected_button2 = "minus"
-    i=1
-    playing = True
-    while playing:
-
-        screen.fill(black)
-        screen.blit(singleoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
-        screen.blit(singleplus_button, (display_funct.screen_width*827.5/1600,display_funct.screen_height*627.5/900))
-        screen.blit(singleminus_button, (display_funct.screen_width*727.5/1600,display_funct.screen_height*627.5/900))
-        screen.blit(singlestart_button, (screen_width*677.5/1600,screen_height*690/900))
-
-        if selected_button1 == "ai" and selected_button2 == "plus":
-            screen.blit(singleplus_on_button, (display_funct.screen_width*827.5/1600,display_funct.screen_height*627.5/900))
-        elif selected_button1 =="ai" and selected_button2 == "minus":
-            screen.blit(singleminus_on_button, (display_funct.screen_width*727.5/1600,display_funct.screen_height*627.5/900))
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
 
         elif selected_button1 == "start":
             screen.blit(singlestart_on_button, (screen_width*677.5/1600,screen_height*690/900))
 
-<<<<<<< HEAD
         screen.blit(player1, (display_funct.screen_width*755/1600, display_funct.screen_height*200/900))
         if selected_ai2 == "area":
             screen.blit(area, (display_funct.screen_width*785/1600, display_funct.screen_height*270/900))
@@ -1776,8 +1750,7 @@ def single_screen():
             screen.blit(area_a, (display_funct.screen_width*770/1600, display_funct.screen_height*550/900))
         
 
-=======
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1785,7 +1758,7 @@ def single_screen():
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.up:
                     # 위쪽 방향키 클릭 시
-<<<<<<< HEAD
+
                     if selected_button1 == "ai1":
                         pass 
                     elif selected_button1 == "ai2":
@@ -1867,64 +1840,11 @@ def single_screen():
                         else:
                             playing = False
 
-=======
-                    if selected_button1 == "ai":
-                        pass 
-                    elif selected_button1 == "start":
-                        selected_button1 = "ai"  
-                elif event.key == display_funct.down:
-                    if selected_button1 == "ai":
-                        selected_button1 = "start"
-                    elif selected_button1 == "start":
-                        pass
-                elif event.key == display_funct.right:
-                    if selected_button1 == "ai" and selected_button2 == "plus":
-                        selected_button2 = "minus"
-                    elif selected_button1 == "ai":
-                        selected_button2 = "plus"
-                    elif selected_button1 == "start":
-                        pass
-                elif event.key == display_funct.left:
-                    if selected_button1 == "ai" and selected_button2 == "plus":
-                        selected_button2 = "minus"
-                    elif selected_button1 == "ai":
-                        selected_button2 = "plus"
-                    elif selected_button1 == "start":
-                        pass
-
-                elif event.key == display_funct.space:
-                    if selected_button1 == "ai" and selected_button2 == "plus":
-                        if i==5:
-                            pass
-                        else:
-                            i += 1
-                    elif selected_button1 == "ai":
-                        if i==1:
-                            pass
-                        else:
-                            i-=1
-                    
-                    elif selected_button1 == "start":
-                        playing = False
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
                 elif event.key == display_funct.esc:
                     display_funct.title = True
                     PY_UNO.main()
 
-<<<<<<< HEAD
-=======
-        screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*185/900))
-        if i > 0:
-            screen.blit(singleai1_button, (screen_width*677.5/1600,screen_height*255/900))
-            if i> 1:    
-                screen.blit(singleai2_button, (screen_width*677.5/1600,screen_height*325/900))
-                if i>2:
-                    screen.blit(singleai3_button, (screen_width*677.5/1600,screen_height*395/900))
-                    if i>3:
-                        screen.blit(singleai4_button, (screen_width*677.5/1600,screen_height*465/900))
-                        if i>4:
-                            screen.blit(singleai5_button, (screen_width*677.5/1600,screen_height*535/900))
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
+
         pygame.display.flip()
 
     board1 = game_classes.Board("board1")  
@@ -1937,7 +1857,7 @@ def single_screen():
     player1 = game_classes.Player("player_1")
     player1.grab_cards(deck1, 2)
     playerAI_list = []
-<<<<<<< HEAD
+
     i=2
     for a in selected_ais:
 
@@ -1953,12 +1873,6 @@ def single_screen():
             playerAI = game_AI.make_AI_A(deck1, "player_"+str(i)+"AI", 7)
             i+=1
             playerAI_list.append(playerAI)
-=======
-
-    for _ in range(i):
-        playerAI = game_AI.make_AI_basic(deck1, "player_"+str(_+2)+"AI", 7)
-        playerAI_list.append(playerAI)
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
 
     display_funct.redraw_hand_visble(player1, None)
     
@@ -2245,12 +2159,8 @@ resultlose_image = pygame.image.load("image/lose.png")
 
 #싱글플레이
 singleoption_image = pygame.image.load("image/singleoption.png")
-<<<<<<< HEAD
 singleplayer_image = pygame.image.load("image/play.png")
 singleplayer_on_image = pygame.image.load("image/play_on.png")
-=======
-singleplayer_image = pygame.image.load("image/player.png")
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
 singleai1_image = pygame.image.load("image/ai1.png")
 singleai2_image = pygame.image.load("image/ai2.png")
 singleai3_image = pygame.image.load("image/ai3.png")
@@ -2347,11 +2257,7 @@ resultlose_button = pygame.transform.scale(resultlose_image, (display_funct.scre
 #싱글플레이
 singleoption_button = pygame.transform.scale(singleoption_image, (display_funct.screen_width*505/1600,display_funct.screen_height*800/900))
 singleplayer_button = pygame.transform.scale(singleplayer_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
-<<<<<<< HEAD
 singleplayer_on_button = pygame.transform.scale(singleplayer_on_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
-
-=======
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
 singleai1_button = pygame.transform.scale(singleai1_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
 singleai2_button = pygame.transform.scale(singleai2_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
 singleai3_button = pygame.transform.scale(singleai3_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
@@ -2455,11 +2361,7 @@ def image_scale():
     #싱글플레이
     display_funct.singleoption_button = pygame.transform.scale(singleoption_image, (display_funct.screen_width*505/1600,display_funct.screen_height*800/900))
     display_funct.singleplayer_button = pygame.transform.scale(singleplayer_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
-<<<<<<< HEAD
     display_funct.singleplayer_on_button = pygame.transform.scale(singleplayer_on_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
-
-=======
->>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
     display_funct.singleai1_button = pygame.transform.scale(singleai1_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
     display_funct.singleai2_button = pygame.transform.scale(singleai2_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
     display_funct.singleai3_button = pygame.transform.scale(singleai3_image, (display_funct.screen_width*245/1600,display_funct.screen_height*70/900))
