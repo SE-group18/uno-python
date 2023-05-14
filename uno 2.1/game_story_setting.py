@@ -67,6 +67,7 @@ def setting_A(deck, player):
             AIcard.append(i)
             AIcard.append(i)
             AIcard.append(i)
+            
         else:
             AIcard.append(i)
             AIcard.append(i)

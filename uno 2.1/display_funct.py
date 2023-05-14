@@ -2100,6 +2100,10 @@ titlesingle_image = pygame.image.load("image/titlesingle.png")
 titlestory_image = pygame.image.load("image/titlestory.png")
 titlemulti_image = pygame.image.load("image/titlemulti.png")
 titleachieve_image = pygame.image.load("image/titleachieve.png")
+titlehost_image = pygame.image.load("image/host.png")
+titlehost_on_image = pygame.image.load("image/host_on.png")
+titleclient_image = pygame.image.load("image/host.png")
+titleclient_on_image = pygame.image.load("image/host.png")
 
 #타이틀_ON
 titlestart_on_image = pygame.image.load("image/titlestart_on.png")
