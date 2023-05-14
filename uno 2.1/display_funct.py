@@ -13,6 +13,7 @@ import game_classes
 import os
 import game_story_setting
 from datetime import datetime
+import socket
 
 pygame.init()
 
@@ -994,10 +995,11 @@ def setting_screen():
 
                     elif selected_option == "close":
                         display_funct.setting = False
+                        PY_UNO.main()
                     
                 elif event.key == display_funct.esc:
                     display_funct.setting = False
-
+                    PY_UNO.main()
     
             with open("config.txt", "w") as f:
                 json.dump(config, f)
@@ -1296,6 +1298,7 @@ def achieve_screen():
 
                 elif event.key == display_funct.esc:
                     display_funct.achieve_title = False
+                    PY_UNO.main()
         achieve_check()
         pygame.display.flip()
 
@@ -1563,6 +1566,49 @@ def title_single():
                 elif event.key == display_funct.esc or event.key == display_funct.left:
                     title_sing = False
                     display_funct.title = True
+            elif event.type ==MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    # 멀티 플레이 부분
+               
+                    #싱글플레이
+                if screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/3 <= click_y <= screen_height/3 + screen_height/12:  
+                    title_sing = False
+                    display_funct.title = True
+                    #Option 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                    title_sing = False
+                    display_funct.setting = True
+                    display_funct.setting_screen()
+                        
+                    #Quit 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                    pygame.quit()
+                    exit()
+                    #업적 버튼
+                elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        title_sing = False
+                        display_funct.title = True
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
+                        
+                elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                screen_height*225/900 <= click_y<= screen_height*225/900+screen_height/9:
+                    title_sing = False
+                    display_funct.single_screen()
+                elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                screen_height*375/900 <= click_y<= screen_height*375/900+screen_height/9:
+                    title_sing = False
+                    display_funct.instorymode = True
+                    display_funct.story_screen()
+
+
+
+           
         achieve_check()
         pygame.display.flip()
 
@@ -1612,12 +1658,13 @@ def title_multi():
                                     pygame.quit()
                                     exit()
                                 elif event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_RETURN:
+                                    if event.key == display_funct.space:
                                         if len(password) != 4:
                                             pass
                                         else:
                                             title_mul = False
-                                            display_funct.host_screen(password)
+                                            host_ip = socket.gethostbyname(socket.gethostname())
+                                            display_funct.host_screen(password, host_ip)
 
                                     elif event.key == display_funct.esc:
                                         done = True
@@ -1632,44 +1679,101 @@ def title_multi():
                                         else:
                                             password += event.unicode
                             pygame.display.flip()
+
                     elif selected_multi == 'client':
                         done = False
                         ip = ''
                         input_ip = pass_font.render("Input IP", True, (255, 255, 255))
+                        password = ''
+                        input_pw = pass_font.render("Input Password", True, (255, 255, 255))
+                        step = 0
                         while not done:
                             ip_1 = pass_font.render(ip, True, (255, 255, 255))
+                            password_1 = pass_font.render(password, True, (255, 255, 255))
                             pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
-                            screen.blit(input_ip,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
-                            screen.blit(ip_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                            if step == 0:
+                                screen.blit(input_ip,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                                screen.blit(ip_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+
+                            elif step == 1:
+                                screen.blit(input_pw,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                                screen.blit(password_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                                
                             for event in pygame.event.get():
                                 if event.type == pygame.QUIT:
                                     pygame.quit()
                                     exit()
                                 elif event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_RETURN:
-                                        if ip == '':
-                                            pass
-                                        else:
-                                            title_mul = False
-                                            display_funct.host_screen(ip)
-
-                                    elif event.key == display_funct.esc:
+                                    if event.key == display_funct.esc:
                                         done = True
+                                        step = 0
                                         pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
                                     
                                     elif event.key == pygame.K_BACKSPACE:
-                                        ip = ip[:-1]
+                                        if step == 0:
+                                            ip = ip[:-1]
+                                        elif step == 1:
+                                            password = password[:-1]
+                                            
+                                    elif event.key == display_funct.space:
+                                        if step == 0:
+                                            if ip == '':
+                                                pass
+                                            else:
+                                                step = 1
 
+                                        elif step == 1:
+                                            if len(password) != 4:
+                                                pass
+                                            else:
+                                                title_mul = False
+                                                ####### 클라이언트 접속 확인 IP 확인 후 패스워드 확인하게 만듬
+                                                display_funct.host_screen(password, ip)
                                     else:
-                                        if len(ip) > 20:
-                                            pass
-                                        else:
-                                            ip += event.unicode
+                                        if step == 0:
+                                            if len(ip) > 20:
+                                                pass
+                                            else:
+                                                ip += event.unicode
+                                        elif step == 1:
+                                            if len(password) >3:
+                                                pass
+                                            else:
+                                                password += event.unicode
+                                    
+
                             pygame.display.flip()
 
                 elif event.key == display_funct.esc or event.key == display_funct.left:
-                    title_multi = False
+                    title_mul = False
                     display_funct.title = True
+           
+            elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    
+                    #멀티 플레이 버튼
+                    if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                        title_mul = False
+                        display_funct.title = True
+                        #Option 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                        screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                        display_funct.setting = True
+                        display_funct.setting_screen()
+                            
+                        #Quit 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                        pygame.quit()
+                        exit()
+                    #업적버튼
+                    elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        title_mul = False
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
         achieve_check()
         pygame.display.flip()
         
@@ -1764,17 +1868,17 @@ def title_screen():
                 if event.button == 1:
                     click_x, click_y = event.pos
                     
-                    #스토리 버튼
+                    #멀티 플레이 버튼
                     if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                     screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
                         display_funct.title = False
-                        display_funct.instorymode = True
-                        display_funct.story_screen()
+
+                        display_funct.title_multi()
                     #싱글플레이
                     elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                         screen_height/3 <= click_y <= screen_height/3 + screen_height/12:  
                         display_funct.title = False
-                        display_funct.single_screen()
+                        display_funct.title_single()
                         #Option 버튼
                     elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                         screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
@@ -1786,6 +1890,11 @@ def title_screen():
                     screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
                         pygame.quit()
                         exit()
+                    
+                    elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
         achieve_check()
         pygame.display.flip()
 
@@ -1917,7 +2026,7 @@ def single_screen():
                                     exit()
 
                                 if event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_RETURN:
+                                    if event.key == display_funct.space:
                                         done = True
                                     elif event.key == pygame.K_BACKSPACE:
                                         player1_name = player1_name[:-1]
@@ -2210,7 +2319,7 @@ def story_screen():
 
 
 ###################################### 멀티 방 #############################################
-def host_screen(password):
+def host_screen(password,host_ip):
     selected_button1 = "ai1"
     selected_ai2 = "no"
     selected_ai3 = "no"
@@ -2220,9 +2329,14 @@ def host_screen(password):
     i=0
     playing = True
     player1_name = "Player1"
+
+    ip = player_font.render("IP: " + str(host_ip), True, (255, 255, 255))
+    pw = player_font.render("Password: " + str(password), True, (255, 255, 255))
     while playing:
         screen.fill(black)
         screen.blit(achieveoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
+        screen.blit(ip, (screen_width*590/1600,screen_height*80/900))
+        screen.blit(pw, (screen_width*590/1600,screen_height*115/900))
         screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*185/900))
         screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*305/900))
         screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*425/900))
@@ -2310,7 +2424,7 @@ def host_screen(password):
                                     exit()
 
                                 if event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_RETURN:
+                                    if event.key == display_funct.space:
                                         done = True
                                     elif event.key == pygame.K_BACKSPACE:
                                         player1_name = player1_name[:-1]
@@ -2746,7 +2860,7 @@ cardplay.set_volume(subsound*sound/100)
 winplay.set_volume(subsound*sound/100)
 loseplay.set_volume(subsound*sound/100)
 drawplay.set_volume(subsound*sound/100)
-
+  
 def setsound():
     cardplay.set_volume(display_funct.subsound*display_funct.sound/100)
     menuplay.set_volume(display_funct.subsound*display_funct.sound/100)
