@@ -994,9 +994,11 @@ def setting_screen():
 
                     elif selected_option == "close":
                         display_funct.setting = False
+                        PY_UNO.main()
                     
                 elif event.key == display_funct.esc:
                     display_funct.setting = False
+                    PY_UNO.main()
     
             with open("config.txt", "w") as f:
                 json.dump(config, f)
@@ -1295,6 +1297,7 @@ def achieve_screen():
 
                 elif event.key == display_funct.esc:
                     display_funct.achieve_title = False
+                    PY_UNO.main()
         achieve_check()
         pygame.display.flip()
 
@@ -1562,6 +1565,49 @@ def title_single():
                 elif event.key == display_funct.esc or event.key == display_funct.left:
                     title_sing = False
                     display_funct.title = True
+            elif event.type ==MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    # 멀티 플레이 부분
+               
+                    #싱글플레이
+                if screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/3 <= click_y <= screen_height/3 + screen_height/12:  
+                    title_sing = False
+                    display_funct.title = True
+                    #Option 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                    title_sing = False
+                    display_funct.setting = True
+                    display_funct.setting_screen()
+                        
+                    #Quit 버튼
+                elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                    pygame.quit()
+                    exit()
+                    #업적 버튼
+                elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        title_sing = False
+                        display_funct.title = True
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
+                        
+                elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                screen_height*225/900 <= click_y<= screen_height*225/900+screen_height/9:
+                    title_sing = False
+                    display_funct.single_screen()
+                elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                screen_height*375/900 <= click_y<= screen_height*375/900+screen_height/9:
+                    title_sing = False
+                    display_funct.instorymode = True
+                    display_funct.story_screen()
+
+
+
+           
         achieve_check()
         pygame.display.flip()
 
@@ -1605,6 +1651,33 @@ def title_multi():
                 elif event.key == display_funct.esc or event.key == display_funct.left:
                     title_multi = False
                     display_funct.title = True
+           
+            elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
+                if event.button == 1:
+                    click_x, click_y = event.pos
+                    
+                    #멀티 플레이 버튼
+                    if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                        title_multi = False
+                        display_funct.title = True
+                        #Option 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                        screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
+                        display_funct.setting = True
+                        display_funct.setting_screen()
+                            
+                        #Quit 버튼
+                    elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
+                    screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
+                        pygame.quit()
+                        exit()
+                    #업적버튼
+                    elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        title_multi = False
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
         achieve_check()
         pygame.display.flip()
         
@@ -1699,17 +1772,17 @@ def title_screen():
                 if event.button == 1:
                     click_x, click_y = event.pos
                     
-                    #스토리 버튼
+                    #멀티 플레이 버튼
                     if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                     screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
                         display_funct.title = False
-                        display_funct.instorymode = True
-                        display_funct.story_screen()
+
+                        display_funct.title_multi()
                     #싱글플레이
                     elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                         screen_height/3 <= click_y <= screen_height/3 + screen_height/12:  
                         display_funct.title = False
-                        display_funct.single_screen()
+                        display_funct.title_single()
                         #Option 버튼
                     elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
                         screen_height/1.5 <= click_y <= screen_height/1.5 + screen_height/12:  
@@ -1721,6 +1794,11 @@ def title_screen():
                     screen_height/1.2 <= click_y <= screen_height/1.2 + screen_height/12:
                         pygame.quit()
                         exit()
+                    
+                    elif screen_width*10/1600 <= click_x <= screen_width*10/1600 + screen_width*26/320 and \
+                    screen_height*800/900<=click_y <= screen_height*800/900 + screen_height/9:
+                        display_funct.achieve_title = True
+                        display_funct.achieve_screen()
         achieve_check()
         pygame.display.flip()
 
