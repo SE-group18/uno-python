@@ -409,6 +409,7 @@ def game_loop(board, deck, players):
         turn_tot += 1
         print("Turn number:", turn_tot)
         print("PLAYER: ", player.name, "TURN")
+        display_funct.turn_turn = player.name
 
         if player.skip:
             if player.AI:
