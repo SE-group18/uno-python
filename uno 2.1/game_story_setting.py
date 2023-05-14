@@ -59,43 +59,12 @@ def test_setting(deck, player):
 def setting_A(deck, player):
     # 컴퓨터가 기술카드를 받을 확률 50% 증가
     player2AI = game_AI.make_AI_A(deck, "player_2AI", 7)
-
-    AIcard = []
-    i=0
-    for card in deck.deck:
-        if(card.type=="p" or card.type=="s" or card.type=="r" or card.type=="d" or card.type=="c"):
-            AIcard.append(i)
-            AIcard.append(i)
-            AIcard.append(i)
-            
-        else:
-            AIcard.append(i)
-            AIcard.append(i)
-        i+=1
-
-    print(i)
-    print("Here!!!!!")
-    print(len(AIcard))
-
-    test_list = []
-    while(len(test_list)<7):
-        temp = random.choice(AIcard)
-        test_list.append(temp)
-        while temp in AIcard:
-            AIcard.remove(temp)
-
-    test_list.sort(reverse=True)
-
-    for list in test_list:
-        card = deck.deck.pop(list)
-        player2AI.hand.append(card)
-        card.set_Owner(player2AI.name)
     player.grab_cards(deck,7)
-    
+
     # ai 가 뽑을때 일반2 특수3 배수로 곱한 list를 셔플하고 뽑음
     # 한 장 뽑을때마다 뽑은 카드와 같은 카드를 제거해줌
 
-    
+
     Players = [player, player2AI]
     return Players
 

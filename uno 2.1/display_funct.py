@@ -260,6 +260,11 @@ def draw_top_stack_card(board):
 
 
 def draw_stack_card(board):
+    if board.turn_iterator==1:
+        display_funct.screen.blit(turn_right_button,(display_funct.screen_width*1/100,display_funct.screen_height*5/7))
+    elif board.turn_iterator==-1:
+        display_funct.screen.blit(turn_left_button,(display_funct.screen_width*1/100,display_funct.screen_height*5/7))
+
     stack_card = game_classes.Card(
         "red", "small_cards/card_back.png", None)
     stack_card.rect = stack_card.rect.move(
@@ -1519,12 +1524,12 @@ def title_single():
     selected_single = 'single'
     title_sing = True
     while title_sing:
-        screen.blit(titlesingle_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*250/900))
-        screen.blit(titlestory_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*400/900))
+        screen.blit(titlesingle_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*225/900))
+        screen.blit(titlestory_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
         if selected_single == 'single':
-            screen.blit(titlesingle_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*250/900))
+            screen.blit(titlesingle_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*225/900))
         elif selected_single == 'story':
-            screen.blit(titlestory_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*400/900))
+            screen.blit(titlestory_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
 
 
         for event in pygame.event.get():
@@ -1559,6 +1564,49 @@ def title_single():
                     display_funct.title = True
         achieve_check()
         pygame.display.flip()
+
+def title_multi():
+    selected_multi = 'host'
+    title_multi = True
+    while title_multi:
+        screen.blit(titlehost_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
+        screen.blit(titleclient_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*525/900))
+
+        if selected_multi == 'host':
+            screen.blit(titlehost_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
+        elif selected_multi == 'client':
+            screen.blit(titleclient_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*525/900))
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == display_funct.up:
+                    if selected_multi == 'host':
+                        selected_multi = 'client'
+                    else:
+                        selected_multi = 'host'
+
+                elif event.key == display_funct.down:
+                    if selected_multi == 'host':
+                        selected_multi = 'client'
+                    else:
+                        selected_multi = 'host'
+
+                elif event.key == display_funct.space:
+                    if selected_multi == 'host':
+                        pass
+
+                    elif selected_multi == 'client':
+                        pass
+
+                elif event.key == display_funct.esc or event.key == display_funct.left:
+                    title_multi = False
+                    display_funct.title = True
+        achieve_check()
+        pygame.display.flip()
         
 def title_screen():
     font = pygame.font.SysFont('malgungothic', 72)
@@ -1569,21 +1617,21 @@ def title_screen():
         screen.fill(black)
         screen.blit(text, text_rect)
         # 버튼 생성
-        screen.blit(titlesingle_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/3))
-        screen.blit(titlemulti_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/2))
-        screen.blit(titleoption_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/1.5))
-        screen.blit(titleexit_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/1.2))
+        screen.blit(titlesingle_button,(display_funct.screen_width*625/1600, display_funct.screen_height/3))
+        screen.blit(titlemulti_button,(display_funct.screen_width*625/1600, display_funct.screen_height/2))
+        screen.blit(titleoption_button,(display_funct.screen_width*625/1600, display_funct.screen_height/1.5))
+        screen.blit(titleexit_button,(display_funct.screen_width*625/1600, display_funct.screen_height/1.2))
         screen.blit(titleachieve_button,(display_funct.screen_width*10/1600, display_funct.screen_height*800/900))
 
         # 선택된 버튼
         if selected_button == "single":
-            screen.blit(titlesingle_on_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/3))
+            screen.blit(titlesingle_on_button,(display_funct.screen_width*625/1600, display_funct.screen_height/3))
         elif selected_button == "story":
-            screen.blit(titlemulti_on_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/2))
+            screen.blit(titlemulti_on_button,(display_funct.screen_width*625/1600, display_funct.screen_height/2))
         elif selected_button == "option":
-            screen.blit(titleoption_on_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/1.5))
+            screen.blit(titleoption_on_button,(display_funct.screen_width*625/1600, display_funct.screen_height/1.5))
         elif selected_button == "exit":
-            screen.blit(titleexit_on_button,(display_funct.screen_width//2-display_funct.screen_width/8, display_funct.screen_height/1.2))
+            screen.blit(titleexit_on_button,(display_funct.screen_width*625/1600, display_funct.screen_height/1.2))
         elif selected_button == 'achieve':
             screen.blit(titleachieve_on_button,(display_funct.screen_width*10/1600, display_funct.screen_height*800/900))
         for event in pygame.event.get():
@@ -1618,7 +1666,8 @@ def title_screen():
                         display_funct.title_single()
                     
                     elif selected_button == "story":
-                        pass
+                        display_funct.title = False
+                        display_funct.title_multi()
                         #multi 추가 해야됨
 
                     elif selected_button == "option":
@@ -2102,9 +2151,7 @@ titlestory_image = pygame.image.load("image/titlestory.png")
 titlemulti_image = pygame.image.load("image/titlemulti.png")
 titleachieve_image = pygame.image.load("image/titleachieve.png")
 titlehost_image = pygame.image.load("image/host.png")
-titlehost_on_image = pygame.image.load("image/host_on.png")
-titleclient_image = pygame.image.load("image/host.png")
-titleclient_on_image = pygame.image.load("image/host.png")
+titleclient_image = pygame.image.load("image/client.png")
 
 #타이틀_ON
 titlestart_on_image = pygame.image.load("image/titlestart_on.png")
@@ -2114,6 +2161,8 @@ titlesingle_on_image = pygame.image.load("image/titlesingle_on.png")
 titlestory_on_image = pygame.image.load("image/titlestory_on.png")
 titlemulti_on_image = pygame.image.load("image/titlemulti_on.png")
 titleachieve_on_image = pygame.image.load("image/titleachieve_on.png")
+titlehost_on_image = pygame.image.load("image/host_on.png")
+titleclient_on_image = pygame.image.load("image/client_on.png")
 
 #ESC
 setting_image = pygame.image.load("image/setting.png")
@@ -2200,6 +2249,8 @@ titlesingle_button = pygame.transform.scale(titlesingle_image, (display_funct.sc
 titlestory_button = pygame.transform.scale(titlestory_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 titlemulti_button = pygame.transform.scale(titlemulti_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 titleachieve_button = pygame.transform.scale(titleachieve_image, (display_funct.screen_width*26/320,display_funct.screen_height/9))
+titlehost_button = pygame.transform.scale(titlehost_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+titleclient_button = pygame.transform.scale(titleclient_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 
 #타이틀_ON
 titlestart_on_button = pygame.transform.scale(titlestart_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
@@ -2209,7 +2260,8 @@ titlesingle_on_button = pygame.transform.scale(titlesingle_on_image, (display_fu
 titlestory_on_button = pygame.transform.scale(titlestory_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 titlemulti_on_button = pygame.transform.scale(titlemulti_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 titleachieve_on_button = pygame.transform.scale(titleachieve_on_image, (display_funct.screen_width*26/320,display_funct.screen_height/9))
-
+titlehost_on_button = pygame.transform.scale(titlehost_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+titleclient_on_button = pygame.transform.scale(titleclient_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 
 #ESC
 setting_button = pygame.transform.scale(setting_image, (display_funct.screen_width/16,display_funct.screen_height/9))
@@ -2305,6 +2357,8 @@ def image_scale():
     display_funct.titlestory_button = pygame.transform.scale(titlestory_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titlemulti_button = pygame.transform.scale(titlemulti_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titleachieve_button = pygame.transform.scale(titleachieve_image, (display_funct.screen_width*26/320,display_funct.screen_height/9))
+    display_funct.titlehost_button = pygame.transform.scale(titlehost_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleclient_button = pygame.transform.scale(titleclient_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 
     #타이틀_ON
     display_funct.titlestart_on_button = pygame.transform.scale(titlestart_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
@@ -2314,6 +2368,8 @@ def image_scale():
     display_funct.titlestory_on_button = pygame.transform.scale(titlestory_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titlemulti_on_button = pygame.transform.scale(titlemulti_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titleachieve_on_button = pygame.transform.scale(titleachieve_on_image, (display_funct.screen_width*26/320,display_funct.screen_height/9))
+    display_funct.titlehost_on_button = pygame.transform.scale(titlehost_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleclient_on_button = pygame.transform.scale(titleclient_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 
     #ESC
     display_funct.setting_button = pygame.transform.scale(setting_image, (display_funct.screen_width/16,display_funct.screen_height/9))
@@ -2356,7 +2412,7 @@ def image_scale():
 
     #업적
     display_funct.achieveoption_button = pygame.transform.scale(achieve_image, (display_funct.screen_width*505/1600,display_funct.screen_height*800/900))
-    display_funct.achieve_text_button = pygame.transform.scale(achieve_text, (display_funct.screen_width*500/1600,display_funct.screen_height*150/900))
+    display_funct.achieve_text_button = pygame.transform.scale(achieve_text, (display_funct.screen_width*400/1600,display_funct.screen_height*120/900))
     display_funct.card_icon_button = pygame.transform.scale(card_icon_image, (display_funct.screen_width*90/1600,display_funct.screen_height*90/900))
 
     #결과창
