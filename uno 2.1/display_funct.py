@@ -276,7 +276,8 @@ def redraw_hand_visble(player, selected=None):
     """
     # player playing indicator placeholder graphic
     player_num = str(player.name[7])
-
+    
+    # 노란색 순서 표시 추가
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
@@ -323,8 +324,8 @@ def redraw_hand_nonvisble(player, start_horz, start_vert=0):
     # placeholder player num graphics
 
     player_num = str(player.name[7])
+    
     # 노란색 순서 표시 추가
-
     if turn_turn == player.name:
         card_disp = game_classes.Card(
             "red", "small_cards/yellow_" + player_num + ".png", None)
