@@ -191,6 +191,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
         while playing:
             stack_uno += 1
             display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+<<<<<<< HEAD
             
             uno_time = 4000 - stack_uno
             display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
@@ -199,6 +200,9 @@ def extern_AI_player_turn(board, deck, player, players, turn):
             display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
 
             if stack_uno>4000:
+=======
+            if stack_uno>5000:
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
                 test=False
                 game_logic.uno_clicked = False
 
@@ -284,6 +288,7 @@ def extern_player_turn(board, deck, player, players, turn):
             playing_1 = True
             while playing_1:
                 stack_uno+=1
+<<<<<<< HEAD
                 uno_time = 4000 - stack_uno
                 display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                 uno_timer = game_font.render(str(uno_time), True, (255,255,255))
@@ -294,6 +299,12 @@ def extern_player_turn(board, deck, player, players, turn):
                     test=True
                     break
 
+=======
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                if stack_uno>5000:
+                        test=True
+                        break
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -306,10 +317,17 @@ def extern_player_turn(board, deck, player, players, turn):
                 pygame.display.flip()
 
             if test:
+<<<<<<< HEAD
                 print("드로우")
                 player.grab_card(deck)
                 display_funct.redraw_screen([(players[0], None)], board, players)
                 test=False
+=======
+                    print("드로우")
+                    player.grab_card(deck)
+                    display_funct.redraw_screen([(players[0], None)], board, players)
+                    test=False
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
                     
         display_funct.redraw_screen([(player, None)], board, players)
 
@@ -523,4 +541,8 @@ def game_loop_C(board, deck, players):
                 return
 
         # iterate the turn
+<<<<<<< HEAD
         turn = compute_turn(players, turn, board.turn_iterator)
+=======
+        turn = compute_turn(players, turn, board.turn_iterator)
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1

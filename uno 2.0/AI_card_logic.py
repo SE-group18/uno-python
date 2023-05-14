@@ -147,13 +147,18 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
         else:
             print("Wild played, playing again.")
             display_funct.redraw_screen([(players[0], None)], board, players)
+<<<<<<< HEAD
 
+=======
+            pygame.time.delay(700)
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
             if len(player.hand) == 1:
                 test= False
                 playing = True
                 while playing:
                     stack_uno += 1
                     display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+<<<<<<< HEAD
                     
                     uno_time = 4000 - stack_uno
                     display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
@@ -162,6 +167,9 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                     display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
 
                     if stack_uno>4000:
+=======
+                    if stack_uno>5000:
+>>>>>>> 5f1f6a423736b88daa159b4ecbfc0f2c1f2116f1
                         test=False
                         game_logic.uno_clicked = False
 
