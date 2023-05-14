@@ -2552,7 +2552,7 @@ cardplay.set_volume(subsound*sound/100)
 winplay.set_volume(subsound*sound/100)
 loseplay.set_volume(subsound*sound/100)
 drawplay.set_volume(subsound*sound/100)
-
+  
 def setsound():
     cardplay.set_volume(display_funct.subsound*display_funct.sound/100)
     menuplay.set_volume(display_funct.subsound*display_funct.sound/100)
