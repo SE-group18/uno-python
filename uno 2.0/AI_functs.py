@@ -4,6 +4,8 @@ import random
 import pygame
 import display_funct
 
+asdf = 0
+
 def get_rand_type():
     """
     Funciton that grabs a random card type that is used within PY-UNO.
@@ -56,12 +58,14 @@ def play_win(board, deck, player, players):
                 player.play_card(board, 0)
             else:
                 player.grab_card(deck)
+                return
 
         # figure out what do within the game from AI played card
         AI_card_logic.AI_card_played_type(
             board, deck, player, players)  # O(n) or recuse Main_Decision_Tree
+        
     else:
-        board.color = get_rand_color()
+        board.color = selected_color
 
 
 def fetch_most_common_color(player):

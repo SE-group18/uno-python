@@ -189,9 +189,12 @@ def gen_rand_deck(deckname, size):
 
 def generate_test_A(deckname):
     cards=[]
+
     wild = game_classes.Card("w_d1", "small_cards/wild_pick_four.png", None)
     normal = game_classes.Card("b_0", "small_cards/blue_0.png", None)
+
     for i in range (0,1000):
         cards.append(wild)
         cards.append(normal)
+        
     return build_deck(deckname, cards)

@@ -11,6 +11,7 @@ class Player:
 
         # AI vairables only
         self.AI = False
+        self.AI_A = False
         self.AI_type = None
         self.Main_Decision_Tree = None
         self.Card_Guess_Tree = None

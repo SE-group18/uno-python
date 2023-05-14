@@ -112,6 +112,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
     Main_Decision_Tree is retraveled thus making stuff deeper.
     """
+    stack_uno=0
     # check to see if AI won
     game_logic.check_winners(player)
 
@@ -146,7 +147,48 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
         else:
             print("Wild played, playing again.")
             display_funct.redraw_screen([(players[0], None)], board, players)
-            pygame.time.delay(700)
+
+            if len(player.hand) == 1:
+                test= False
+                playing = True
+                while playing:
+                    stack_uno += 1
+                    display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                    
+                    uno_time = 4000 - stack_uno
+                    display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                    uno_timer = game_logic.game_font.render(str(uno_time), True, (255,255,255))
+                    pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+                    display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
+
+                    if stack_uno>4000:
+                        test=False
+                        game_logic.uno_clicked = False
+
+                        break
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            exit()
+                        elif event.type == pygame.KEYDOWN:
+                            if event.key == display_funct.space:
+                                playing = False
+                                test = True
+                    pygame.display.flip()
+
+                if test:
+                    print("드로우 됨")
+                    player.grab_cards(deck,1)
+                    
+                    display_funct.redraw_screen([(players[0], None)], board, players)
+                    test=False
+            
+
+            display_funct.redraw_screen([(players[0], None)], board, players)
+            pygame.time.delay(1200)
+             
+
+
             Main_Decision_Tree.travel_Main_Decision_Tree(board, deck, player,
                                                          players, player.Main_Decision_Tree.Dec_Tree)
 
@@ -165,7 +207,45 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
     elif played_type == "k":
         print("king played, play again")
         display_funct.redraw_screen([(players[0], None)], board, players)
-        pygame.time.delay(700)
+
+        if len(player.hand) == 1:
+            test= False
+            playing = True
+            while playing:
+                stack_uno += 1
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                
+                uno_time = 4000 - stack_uno
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                uno_timer = game_logic.game_font.render(str(uno_time), True, (255,255,255))
+                pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+                display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
+
+                if stack_uno>4000:
+                    test=False
+                    game_logic.uno_clicked = False
+
+                    break
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == display_funct.space:
+                            playing = False
+                            test = True
+                pygame.display.flip()
+
+            if test:
+                print("드로우 됨")
+                player.grab_cards(deck,1)
+                
+                display_funct.redraw_screen([(players[0], None)], board, players)
+                test=False
+            
+
+        display_funct.redraw_screen([(players[0], None)], board, players)
+        pygame.time.delay(1200)
         Main_Decision_Tree.travel_Main_Decision_Tree(board, deck, player,
                                                          players, player.Main_Decision_Tree.Dec_Tree)
     elif played_type.isdigit():     # normal number card played

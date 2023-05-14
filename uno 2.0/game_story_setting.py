@@ -63,7 +63,7 @@ def setting_A(deck, player):
     AIcard = []
     i=0
     for card in deck.deck:
-        if(card.type=="p" or card.type=="s" or card.type=="r" or card.type=="d" or card.type=="c"):
+        if(card.type=="p" or card.type=="s" or card.type=="r" or card.type=="d" or card.type=="c" or card.type =="k" or card.type =="a"):
             AIcard.append(i)
             AIcard.append(i)
             AIcard.append(i)
@@ -89,6 +89,7 @@ def setting_A(deck, player):
         card = deck.deck.pop(list)
         player2AI.hand.append(card)
         card.set_Owner(player2AI.name)
+        
     player.grab_cards(deck,7)
     
     # ai 가 뽑을때 일반2 특수3 배수로 곱한 list를 셔플하고 뽑음

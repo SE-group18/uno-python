@@ -2180,6 +2180,12 @@ cleared_button = pygame.transform.scale(cleared_image, (display_funct.screen_wid
 notcleared_button = pygame.transform.scale(notcleared_image, (display_funct.screen_width*40/1600,display_funct.screen_height*40/900))
 checkmap_button = pygame.transform.scale(checkmap_image, (display_funct.screen_width*400/1600,display_funct.screen_height*300/900))
 
+#대충 턴 보여주는거
+turn_right = pygame.image.load("image/turn_1.png")
+turn_left = pygame.image.load("image/turn_2.png")
+turn_right_button = pygame.transform.scale(turn_right, (display_funct.screen_width*130/1600,display_funct.screen_height*30/900))
+turn_left_button = pygame.transform.scale(turn_left, (display_funct.screen_width*130/1600,display_funct.screen_height*30/900))
+
 def image_scale():
     #타이틀
     display_funct.titlestart_button = pygame.transform.scale(titlestart_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
@@ -2280,6 +2286,9 @@ def image_scale():
 
     display_funct.card_width = screen_width/12.3
     display_funct.card_height = screen_height/4.9
+
+    display_funct.turn_right_button = pygame.transform.scale(turn_right, (display_funct.screen_width*130/1600,display_funct.screen_height*30/900))
+    display_funct.turn_left_button = pygame.transform.scale(turn_left, (display_funct.screen_width*130/1600,display_funct.screen_height*30/900))
 
 #######################################사운드#############################################
 pygame.mixer.music.load("sound/background.mp3")
