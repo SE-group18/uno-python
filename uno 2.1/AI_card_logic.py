@@ -162,9 +162,8 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                     display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
 
                     if stack_uno>4000:
+                        display_funct.unoother_played = True
                         test=False
-                        game_logic.uno_clicked = False
-
                         break
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
@@ -223,8 +222,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
                 if stack_uno>4000:
                     test=False
-                    game_logic.uno_clicked = False
-
+                    display_funct.unoother_played = True
                     break
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:

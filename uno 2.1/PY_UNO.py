@@ -13,7 +13,6 @@ def main():
     display_funct.setting = False
     display_funct.option = False
     display_funct.instorymode = False
-    game_logic.uno_clicked = False
     display_funct.achieve_title = False
 
     while True:

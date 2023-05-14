@@ -71,13 +71,16 @@ def game_loop_multi_server(board, deck, players):
 
         elif player.AI:  # handle for an AI player
             game_logic.extern_AI_player_turn(board, deck, player, players, turn)
+
         elif player.client:
             # 0512 : server가 보내는 정보 board, deck, player, players, turn
             # 0512 : client가 받는 정보도 똑같이 구성. 와카면 turn이 안바뀜 그래서 한번 더 돔?
             # 0512 : 클라이언트가 보내준 정보를 받고 화면 redraw
             # 0512 : client는 player[turn]이 
+
             (update, turn_done) = game_logic.extern_player_turn(board, deck,
                                                      player, players, turn)
+            
         else:            # handle for a human player
             (update, turn_done) = game_logic.extern_player_turn(board, deck,
                                                      player, players, turn)

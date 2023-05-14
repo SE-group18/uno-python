@@ -62,6 +62,8 @@ first_defeat = False
 stroke5 = 0
 cont3 = 0
 cont3_true = False
+unoother_played = False
+unoother_what = False
 
 #업적 달성
 first_victory_achieve_check = 0
@@ -572,6 +574,10 @@ def draw_winners(winners, turn_tot):
             if display_funct.instorymode == False:
                 if display_funct.fair == 0:
                     display_funct.fair = True
+                
+                if display_funct.unoother_played == True:
+                    display_funct.unoother_what = True
+
                 display_funct.first_victory = True
                 display_funct.stroke5 += 1
                 
@@ -1394,6 +1400,13 @@ def achieve_check():
         display_funct.cont3_date = current_date
         config_ach["cont3_date"] = cont3_date
         achieve_popup(achieve)
+    
+    elif display_funct.unoother_what == True and display_funct.unoother_check == 0:       #10턴 승리
+        achieve = "unoother"
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        display_funct.unoother_date = current_date
+        config_ach["unoother_date"] = display_funct.unoother_date
+        achieve_popup(achieve)
 
     with open("achievement.txt", "w") as fa:
         json.dump(config_ach, fa)
@@ -1511,6 +1524,18 @@ def achieve_popup(what):
             display_funct.cont3_check = 1
             config_ach["cont3_check"] = 1
             display_funct.stack = 0
+    
+    elif what == "unoother":
+        display_funct.stack += 1
+        achieve_card = title_font.render('배수진', True, (0, 0, 0))
+        achieve_card_text = text_font.render('-다른 플레이어 UNO 후 승리', True, (0, 0, 0))
+        screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*625/900))
+        screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*655/900))
+        if display_funct.stack > 500:
+            display_funct.unoother_check = 1
+            config_ach["unoother_check"] = 1
+            display_funct.stack = 0
+            
 
     with open("achievement.txt", "w") as fa:
         json.dump(config_ach, fa)
@@ -1662,6 +1687,7 @@ def title_multi():
                                         if len(password) != 4:
                                             pass
                                         else:
+                                            ######### 서버 만들어져야되는
                                             title_mul = False
                                             host_ip = socket.gethostbyname(socket.gethostname())
                                             display_funct.host_screen(password, host_ip)
@@ -1867,12 +1893,10 @@ def title_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN: #마우스 클릭시
                 if event.button == 1:
                     click_x, click_y = event.pos
-                    
                     #멀티 플레이 버튼
                     if  screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \
-                    screen_height/2 <= click_y <= screen_height/2 + screen_height/12:
+                    screen_height/2 <= click_y <= screen_height/2 + screen_height/12: 
                         display_funct.title = False
-
                         display_funct.title_multi()
                     #싱글플레이
                     elif screen_width//2-screen_width/8 <= click_x <= screen_width//2-screen_width/8 + screen_width/4 and \

@@ -19,7 +19,6 @@ paused = False
 # global list containing the winners in placement order
 global winners
 winners = []
-uno_clicked = False
 uno_stack = 0
 
 def update_hatval(player, target, hate_increase=1):
@@ -137,12 +136,6 @@ def check_game_done(players, turn_tot):
     global winners
 
     print(display_funct.player_total)
-    
-    if display_funct.fair == 0:
-        display_funct.fair = True
-
-    else:
-        display_funct.fair = 0
 
     if len(players) <= display_funct.player_total-1:
         print("\n\ngame done!!!!!")
@@ -165,7 +158,6 @@ def check_game_done(players, turn_tot):
                     # clear winners for next game
                     winners = []
                     if display_funct.instorymode:
-                        game_logic.uno_clicked = False
                         display_funct.story_screen()
                     else:
                         display_funct.title = True
@@ -200,8 +192,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
 
             if stack_uno>4000:
                 test=False
-                game_logic.uno_clicked = False
-
+                display_funct.unoother_played = True
                 break
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -279,8 +270,10 @@ def extern_player_turn(board, deck, player, players, turn):
             display_funct.cont3_true = True
 #주석
         if len(player.hand) == 1:
+            
             test= False
             display_funct.redraw_screen([(player, None)], board, players)
+
             playing_1 = True
             while playing_1:
                 stack_uno+=1
