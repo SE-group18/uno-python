@@ -1800,6 +1800,15 @@ def title_multi():
                         title_mul = False
                         display_funct.achieve_title = True
                         display_funct.achieve_screen()
+                    #host 버튼
+                    elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                    screen_height*375/955 <=click_y <= screen_height*375/955+screen_height/9:
+                        print("host버튼")
+                    #client 버튼
+                    elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                    screen_height*525/900 <=click_y <= screen_height*525/900+screen_height/9:
+                        print("client 버튼")    
+                       
         achieve_check()
         pygame.display.flip()
         
