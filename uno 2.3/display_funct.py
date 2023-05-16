@@ -2389,6 +2389,7 @@ def host_screen(password,host_ip):
     selected_ai2 = "no"
     selected_ai3 = "no"
     selected_ai4 = "no"
+    selected_ai5 = 0
 
     player_font = pygame.font.SysFont('malgungothic', 25)
     i=0
@@ -2435,8 +2436,8 @@ def host_screen(password,host_ip):
                     display_funct.check_password = 0
                     stack_2=1
                     chat = 'Client Joined'
-        
-            selected_ais = [selected_ai1,selected_ai2,selected_ai3,selected_ai4, selected_button1]
+                s.set()
+            selected_ais = [selected_ai1,selected_ai2,selected_ai3,selected_ai4, selected_button1, selected_ai5]
             if stack_2 == 1:
                 for a in range(len(selected_ais)):
                     if "client" not in selected_ais:
@@ -2451,6 +2452,7 @@ def host_screen(password,host_ip):
                             break
                 serialized_data = pickle.dumps(selected_ais)
                 display_funct.client_socket.sendall(serialized_data)
+                selected_ai5 = 0
 
         except socket.error as e:
             display_funct.client_socket = ''
@@ -2582,8 +2584,7 @@ def host_screen(password,host_ip):
                                         
                     elif selected_button1 == "ai2":
                         if selected_ai2 == "client":
-                            message = "kick"
-                            client_socket.sendall(message.encode())
+                            selected_ai5 = "kick"
                         elif selected_ai2 == "no":
                             selected_ai2 = "area"
                         elif selected_ai2 == "area":
@@ -2593,8 +2594,7 @@ def host_screen(password,host_ip):
 
                     elif selected_button1 == "ai3":
                         if selected_ai3 == "client":
-                            message = "kick"
-                            client_socket.sendall(message.encode())
+                            selected_ais = "kick"
                         elif selected_ai3 == "no":
                             selected_ai3 = "area"
                         elif selected_ai3 == "area":
@@ -2604,8 +2604,7 @@ def host_screen(password,host_ip):
 
                     elif selected_button1 == "ai4":
                         if selected_ai4 == "client":
-                            message = "kick"
-                            client_socket.sendall(message.encode())
+                            selected_ai5 = "kick"
                         elif selected_ai4 == "no":
                             selected_ai4 = "area"
                         elif selected_ai4 == "area":
@@ -2680,18 +2679,15 @@ def client_screen(host_ip,password):
         screen.blit(singlestart_button, (screen_width*677.5/1600,screen_height*690/900))
 
         datas = display_funct.client_socket.recv(4096)
-        try:
-            selected_ais = pickle.loads(datas)
-        except:
-            print(datas.decode())
-            if datas.decode() == 'start':
-                playing = False
-                game_logic.game_loop_client()
-            if datas.decode() == 'kick':
-                playing = False
-                display_funct.title = True
-                display_funct.client_socket.close()
-                PY_UNO.main()
+        selected_ais = pickle.loads(datas)
+        if selected_ais[5] == 'start':
+            playing = False
+            game_logic.game_loop_client()
+        if selected_ais[5] == 'kick':
+            playing = False
+            display_funct.title = True
+            display_funct.client_socket.close()
+            PY_UNO.main()
 
         player = []
         for i in range(len(selected_ais)-1):
