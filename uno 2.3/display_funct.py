@@ -1822,6 +1822,130 @@ def title_multi():
                         title_mul = False
                         display_funct.achieve_title = True
                         display_funct.achieve_screen()
+                    elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                    screen_height*375/955 <=click_y <= screen_height*375/955+screen_height/9:
+                        done = False
+                        password = ''
+                        input_pw = pass_font.render("Input Password", True, (255, 255, 255))
+                        while not done:
+                            password_1 = pass_font.render(password, True, (255, 255, 255))
+                            pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,150,60])
+                            screen.blit(input_pw,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                            screen.blit(password_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif event.type == pygame.KEYDOWN:
+                                    if event.key == display_funct.space:
+                                        if len(password) != 4:
+                                            pass
+                                        else:
+                                            ######### 서버 만들어져야되는
+                                            title_mul = False
+                                            host_ip = socket.gethostbyname(socket.gethostname())
+                                            display_funct.host_screen(password, host_ip)
+
+                                    elif event.key == display_funct.esc:
+                                        done = True
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,150,60])
+                                    
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        password = password[:-1]
+
+                                    else:
+                                        if len(password) > 3:
+                                            pass
+                                        else:
+                                            password += event.unicode
+                            pygame.display.flip()
+                    #client 버튼
+                    elif screen_width*1000/1600 <= click_x <= screen_width*1000/1600 + screen_width*7/32 and \
+                    screen_height*525/900 <=click_y <= screen_height*525/900+screen_height/9:
+                        done = False
+                        ip = ''
+                        input_ip = pass_font.render("Input IP", True, (255, 255, 255))
+                        password = ''
+                        input_pw = pass_font.render("Input Password", True, (255, 255, 255))
+                        step = 0
+                        while not done:
+                            ip_1 = pass_font.render(ip, True, (255, 255, 255))
+                            password_1 = pass_font.render(password, True, (255, 255, 255))
+                            pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
+                            if step == 0:
+                                screen.blit(input_ip,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                                screen.blit(ip_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+
+                            elif step == 1:
+                                screen.blit(input_pw,(display_funct.screen_width*1020/1600,display_funct.screen_height*300/900))
+                                screen.blit(password_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*330/900))
+                                
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    exit()
+                                elif event.type == pygame.KEYDOWN:
+                                    if event.key == display_funct.esc:
+                                        done = True
+                                        step = 0
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
+                                    
+                                    elif event.key == pygame.K_BACKSPACE:
+                                        if step == 0:
+                                            ip = ip[:-1]
+                                        elif step == 1:
+                                            password = password[:-1]
+                                            
+                                    elif event.key == display_funct.space:
+                                        if step == 0:
+                                            if ip == '':
+                                                pass
+                                            else:
+                                                ########################클라이언트
+                                                SERVER_HOST = ip  # 서버 IP 주소
+                                                SERVER_PORT = 5555  # 서버 포트 번호
+
+                                                try:
+                                                    display_funct.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                                    display_funct.client_socket.connect((SERVER_HOST, SERVER_PORT))
+                                                    #여기서 받았을 서버가
+                                                    step = 1
+                                                except:
+                                                    step = 0
+                                                    pass
+                                                
+
+                                        elif step == 1:
+                                            if len(password) != 4:
+                                                pass
+                                            else:
+                                                title_mul = False
+                                                ####### 클라이언트 접속 확인 IP 확인 후 패스워드 확인하게 만듬
+                                                #display_funct.host_screen(password, ip)
+                                                #패스워드를 보내고 안맞으면 킥
+                                                display_funct.client_socket.sendall(password.encode())
+                                                message = client_socket.recv(1024)
+                                                if (message.decode() == 'close'):
+                                                    client_socket.close()
+                                                    PY_UNO.main()
+                                                else:
+                                                    display_funct.client_screen(ip,password)
+                                    else:
+                                        if step == 0:
+                                            if len(ip) > 20:
+                                                pass
+                                            else:
+                                                ip += event.unicode
+                                        elif step == 1:
+                                            if len(password) >3:
+                                                pass
+                                            else:
+                                                password += event.unicode
+                                    
+
+                            pygame.display.flip()
+                        print("client 버튼")    
+
         achieve_check()
         pygame.display.flip()
         
@@ -2425,18 +2549,29 @@ def host_screen(password,host_ip):
                     chat = 'Client Accepted'
 
             if display_funct.check_password != 0:
+                i = 0
+                for a in selected_ais:
+                    if a == "no":
+                        i += 1
+
                 if check_password != password:
                     message = "close"
                     client_socket.sendall(message.encode())
                     display_funct.check_password = 0
                     chat = 'Client Password Error'
+                
+                elif i == 0:
+                    message = "close"
+                    client_socket.sendall(message.encode())
+                    display_funct.check_password = 0
+                    chat = 'Client No room'
                 else:
                     message = "ok"
                     client_socket.sendall(message.encode())
                     display_funct.check_password = 0
                     stack_2=1
                     chat = 'Client Joined'
-                s.set()
+                
             selected_ais = [selected_ai1,selected_ai2,selected_ai3,selected_ai4, selected_button1, selected_ai5]
             if stack_2 == 1:
                 for a in range(len(selected_ais)):
@@ -2452,7 +2587,9 @@ def host_screen(password,host_ip):
                             break
                 serialized_data = pickle.dumps(selected_ais)
                 display_funct.client_socket.sendall(serialized_data)
-                selected_ai5 = 0
+                
+                if selected_ai5 == "kick":
+                    selected_ai5 = 0
 
         except socket.error as e:
             display_funct.client_socket = ''
@@ -2468,7 +2605,7 @@ def host_screen(password,host_ip):
                         selected_ai3 = "no"
                     elif a==3:
                         selected_ai4 = "no"
-                
+        
         screen.fill(black)
         screen.blit(achieveoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
         screen.blit(ip, (screen_width*590/1600,screen_height*80/900))
@@ -2584,6 +2721,7 @@ def host_screen(password,host_ip):
                                         
                     elif selected_button1 == "ai2":
                         if selected_ai2 == "client":
+                            print(123)
                             selected_ai5 = "kick"
                         elif selected_ai2 == "no":
                             selected_ai2 = "area"
