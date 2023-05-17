@@ -172,7 +172,7 @@ def check_game_done(players, turn_tot):
 who = ""
 
 def extern_AI_player_turn(board, deck, player, players, turn):
-    pygame.time.delay(800)
+    display_funct.wait(1000000)
     stack_uno=0
     increment_card_old_vals(player)  # O(n)
 
@@ -216,7 +216,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
 
     display_funct.redraw_screen([(players[0], None)], board, players)
 
-    pygame.time.delay(200)
+    display_funct.wait(200)
 
 
 
@@ -479,7 +479,7 @@ def game_loop_C(board, deck, players):
         
     #새로 추가 부분
         if(turn_tot%5==0 and turn_tot!=0):
-            pygame.time.delay(1000)
+            display_funct.wait(1000)
             
             
             seednum=random.randrange(1,1000)
@@ -494,7 +494,7 @@ def game_loop_C(board, deck, players):
       
             print("변경된 색깔 :"+board.color+" 변경된 타입 :"+board.type) 
             display_funct.redraw_screen([(players[0], None)], board, players)
-            pygame.time.delay(1000)
+            display_funct.wait(1000)
 
         if player.skip:
             if player.AI:
@@ -542,6 +542,8 @@ def game_loop_host(board, deck, players):
     board_dict.append(board.name)
     board_dict.append(board.turn_iterator)
     board_dict.append(board.card_stack[-1].name)
+    board_dict.append(board.color)
+    board_dict.append(board.color)
 
     player_dict = {}
     for player in players:
@@ -561,60 +563,155 @@ def game_loop_host(board, deck, players):
     deck1 = deck_gen.gen_rand_deck("deck2",1)
 
     while True:
-
-
         player = players[turn]
         turn_tot += 1
 
         print("Turn number:", turn_tot)
         print("PLAYER: ", player.name, "TURN")
-        
-        board_dict = []
-        board_dict.append(board.name)
-        board_dict.append(board.turn_iterator)
-        board_dict.append(board.card_stack[-1].name)
-        board_dict.append(player.name)
-
-        player_dict = {}
-
-
-        for playersa in players:
-            for a in range(len(playersa.hand)):
-                try:
-                    player_dict[playersa.name].append(playersa.hand[a].name)
-                except:
-                    player_dict[playersa.name] = [playersa.hand[a].name]
-
-        both_dict = []
-        both_dict.append(board_dict)
-        both_dict.append(player_dict)
-
-        both_dict_pickle = pickle.dumps(both_dict)         
-        display_funct.client_socket.sendall(both_dict_pickle)
-        print("player both send")
 
         if player.skip:
             if player.AI:
                 increment_card_old_vals(player)
-
             print("skipping", player.name, "turn")
             player.skip = False
 
         elif player.AI:  # handle for an AI player
+            board_dict = []
+            board_dict.append(board.name)
+            board_dict.append(board.turn_iterator)
+            board_dict.append(board.card_stack[-1].name)
+            board_dict.append(player.name)
+            board_dict.append(board.color)
+
+            player_dict = {}
+
+
+            for playersa in players:
+                for a in range(len(playersa.hand)):
+                    try:
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+                    except:
+                        player_dict[playersa.name] = [playersa.hand[a].name]
+
+            both_dict = []
+            both_dict.append(board_dict)
+            both_dict.append(player_dict)
+
+            both_dict_pickle = pickle.dumps(both_dict)         
+            display_funct.client_socket.sendall(both_dict_pickle)
+            print("player both send")
             extern_AI_player_turn(board, deck, player, players, turn)
         
         elif player.Client:
             print("클라이언트 플레이 대기중")
-            client_played = display_funct.client_socket.recv(4096)
-            client_play = pickle.loads(client_played)
-            client_player_hand = client_play[0]
-            board.update_Board(deck1.grab_card_multi(client_play[1]))
-            turn += 1
-            display_funct.redraw_screen([(players[0], None)], board, players)
-            print("turn+1")
+            done = False
+            while not done:
+                board_dict = []
+                board_dict.append(board.name)
+                board_dict.append(board.turn_iterator)
+                board_dict.append(board.card_stack[-1].name)
+                board_dict.append(player.name)
+                board_dict.append(board.color)
+
+                player_dict = {}
+
+
+                for playersa in players:
+                    for a in range(len(playersa.hand)):
+                        try:
+                            player_dict[playersa.name].append(playersa.hand[a].name)
+                        except:
+                            player_dict[playersa.name] = [playersa.hand[a].name]
+
+                both_dict = []
+                both_dict.append(board_dict)
+                both_dict.append(player_dict)
+
+                both_dict_pickle = pickle.dumps(both_dict)         
+                display_funct.client_socket.sendall(both_dict_pickle)
+                print("player both send")
+
+                client_played = display_funct.client_socket.recv(4096)
+                client_play = pickle.loads(client_played)
+                player.hand=[]
+                for card in list(client_play[0].values()):
+                    for a in card:
+                        player.hand.append(deck1.grab_card_multi(a))
+                board.update_Board(deck1.grab_card_multi(client_play[1]))
+                board.color = client_play[2]
+
+                played_color = client_play[1][0]
+                played_type = client_play[1][2]
+
+                if client_play[4] == True:
+                    break
+
+                if played_color == "w":
+                    for a in range(len(players)):
+                        if  players[a].name == client_play[3]:
+                            target = a
+                    if played_type == "d":      # wild choose color draw 4 card played
+                        players[target].grab_cards(deck, 4)
+                    elif played_type == "a":
+                        for play in players:
+                            if play.name == player.name:
+                                pass
+                            else:
+                                play.grab_card(deck)
+    
+                            
+
+                elif played_type == "p":        # draw 2 card played
+                    for a in range(len(players)):
+                        if  players[a].name == client_play[3]:
+                            target = a
+                    players[target].grab_cards(deck, 2)
+                    done = True
+                elif played_type == "s":        # skip turn card played
+                    done = True
+                    for a in range(len(players)):
+                        if  players[a].name == client_play[3]:
+                            target = a
+                    players[a].skip = True
+                elif played_type == "d":
+                    for a in range(len(players)):
+                        if  players[a].name == client_play[3]:
+                            target = a
+                    players[target].grab_cards(deck, 1)
+                    done = True
+                else:
+                    done = True
+
+                
+
+                display_funct.redraw_screen([(players[0], None)], board, players)
 
         else:            # handle for a human player
-            (update, turn_done) = extern_player_turn(board, deck,
+            board_dict = []
+            board_dict.append(board.name)
+            board_dict.append(board.turn_iterator)
+            board_dict.append(board.card_stack[-1].name)
+            board_dict.append(player.name)
+            board_dict.append(board.color)
+
+            player_dict = {}
+
+
+            for playersa in players:
+                for a in range(len(playersa.hand)):
+                    try:
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+                    except:
+                        player_dict[playersa.name] = [playersa.hand[a].name]
+
+            both_dict = []
+            both_dict.append(board_dict)
+            both_dict.append(player_dict)
+
+            both_dict_pickle = pickle.dumps(both_dict)         
+            display_funct.client_socket.sendall(both_dict_pickle)
+            print("player both send")
+            (update, turn_done) = extern_player_turn_host(board, deck,
                                                      player, players, turn)
         # check if the player won this round and properly remove them from the
         # game. Also check if the game is done "only one player left".
@@ -667,6 +764,7 @@ def game_loop_client():
         board = game_classes.Board("board1")
         board.turn_iterator = board_dict[1]
         board.update_Board(deck1.grab_card_multi(board_dict[2]))
+        board.color = board_dict[4]
 
         result = [len(value) for value in player_dict.values()]
         print(player_dict)
@@ -719,26 +817,260 @@ def game_loop_client():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         exit()
-                (update, turn_done) = extern_player_turn(board, deck,players[My_turn], players, 0)
+                (grab, turn_done) = extern_player_turn_client(board, deck,players[My_turn], players, 0)
 
-                if turn_done == True:
-                    client_dict = []
-                    player_client_dict = {}
-                    for a in range(len(players[My_turn].hand)):
-                        try:
-                            player_client_dict[players[My_turn].name].append(players[My_turn].hand[a].name)
-                        except:
-                            player_client_dict[players[My_turn].name] = [players[My_turn].hand[a].name]
-
-                    client_dict.append(player_client_dict)
-                    client_dict.append(board.card_stack[-1].name)
-
-                    client_dict_pickle = pickle.dumps(client_dict)
-                    display_funct.client_socket.sendall(client_dict_pickle)
-
-                    print("sended")
-
+                if turn_done == True or grab == True:
                     done = True
 
         else:
             print("Not my turn")
+
+
+def extern_player_turn_host(board, deck, player, players, turn):
+    drop_again = True
+    game_logic.start_ticks=pygame.time.get_ticks()
+    game_logic.paused_time = 0
+    display_funct.cont3 = 0
+    stack_uno=0
+    while drop_again:
+        turn_done = False
+        selected = None
+        grab = False
+        if display_funct.wildplayed == True:
+            game_logic.start_ticks=pygame.time.get_ticks()
+            game_logic.paused_time = 0
+            display_funct.wildplayed = False
+
+        display_funct.cont3 += 1
+
+        # redraw display at start of human turn
+        display_funct.redraw_screen([(player, None)], board, players)
+
+        # grab the list of allowed_cards cards
+        allowed_card_list = card_logic.card_allowed(board, player)
+        # if no cards can be played end turn
+        if len(allowed_card_list) == 0:
+            display_funct.drawplay.play()
+            player.grab_card(deck)
+            display_funct.redraw_screen([(players[0], None)], board, players)
+            turn = compute_turn(players, turn, board.turn_iterator)
+            return (player, turn)
+
+        while not turn_done:
+            (update, selected, turn_done, grab) = intern_player_turn(
+                board, deck, player,players, allowed_card_list, selected)
+        
+            check_winners(player)
+
+            update = check_update(board, allowed_card_list, selected,
+                                  player, players, update)
+        
+        print(board.card_stack[-1].name)
+
+        # returns false unless a drop_again type card is played
+        if (grab==True):
+            break
+        else:
+            drop_again = card_logic.card_played_type(board, deck,
+                                                 player, players)
+            
+        print(board.card_stack[-1].name)
+
+        board_dict = []
+        board_dict.append(board.name)
+        board_dict.append(board.turn_iterator)
+        board_dict.append(board.card_stack[-1].name)
+        board_dict.append(player.name)
+        board_dict.append(board.color)
+
+        player_dict = {}
+        for playersa in players:
+            for a in range(len(playersa.hand)):
+                try:
+                    player_dict[playersa.name].append(playersa.hand[a].name)
+                except:
+                    player_dict[playersa.name] = [playersa.hand[a].name]
+
+        both_dict = []
+        both_dict.append(board_dict)
+        both_dict.append(player_dict)
+
+        both_dict_pickle = pickle.dumps(both_dict)         
+        display_funct.client_socket.sendall(both_dict_pickle)
+        print("player both send")
+
+        if drop_again == True:
+            display_funct.wildplayed = True
+
+        if display_funct.cont3 >= 4:
+            display_funct.cont3_true = True
+#주석   
+        
+
+        if len(player.hand) == 1:
+            
+            test= False
+            display_funct.redraw_screen([(player, None)], board, players)
+
+            playing_1 = True
+            while playing_1:
+                stack_uno+=1
+                uno_time = 4000 - stack_uno
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                uno_timer = game_font.render(str(uno_time), True, (255,255,255))
+                pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+                display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
+
+                if stack_uno>4000:
+                    test=True
+                    break
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == display_funct.space:
+                            playing_1 = False
+                            test=False
+                            
+                pygame.display.flip()
+
+            if test:
+                print("드로우")
+                player.grab_card(deck)
+                display_funct.redraw_screen([(players[0], None)], board, players)
+                test=False
+                    
+        display_funct.redraw_screen([(player, None)], board, players)
+
+    return (player, turn_done)
+
+target = 0
+
+def extern_player_turn_client(board, deck, player, players, turn):
+    drop_again = True
+    game_logic.start_ticks=pygame.time.get_ticks()
+    game_logic.paused_time = 0
+    display_funct.cont3 = 0
+    stack_uno=0
+    while drop_again:
+        turn_done = False
+        selected = None
+        grab = False
+        if display_funct.wildplayed == True:
+            game_logic.start_ticks=pygame.time.get_ticks()
+            game_logic.paused_time = 0
+            display_funct.wildplayed = False
+
+        display_funct.cont3 += 1
+
+        # redraw display at start of human turn
+        display_funct.redraw_screen([(player, None)], board, players)
+
+        # grab the list of allowed_cards cards
+        allowed_card_list = card_logic.card_allowed(board, player)
+        # if no cards can be played end turn
+        if len(allowed_card_list) == 0:
+            display_funct.drawplay.play()
+            player.grab_card(deck)
+            display_funct.redraw_screen([(players[0], None)], board, players)
+            turn = compute_turn(players, turn, board.turn_iterator)
+            return (grab, turn)
+
+        while not turn_done:
+            (update, selected, turn_done, grab) = intern_player_turn(
+                board, deck, player,players, allowed_card_list, selected)
+        
+            check_winners(player)
+
+            update = check_update(board, allowed_card_list, selected,
+                                  player, players, update)
+
+        
+
+        # returns false unless a drop_again type card is played
+        if (grab==True):
+            client_dict = []
+            player_client_dict = {}
+            for a in range(len(player.hand)):
+                try:
+                    player_client_dict[player.name].append(player.hand[a].name)
+                except:
+                    player_client_dict[player.name] = [player.hand[a].name]
+
+            client_dict.append(player_client_dict)
+            client_dict.append(board.card_stack[-1].name) 
+            client_dict.append(board.color)
+            client_dict.append(game_logic.target)
+            client_dict.append(grab)
+
+            client_dict_pickle = pickle.dumps(client_dict)
+            display_funct.client_socket.sendall(client_dict_pickle)
+            return (grab, turn)
+        else:
+            drop_again = card_logic.card_played_type(board, deck,
+                                                 player, players)
+            
+        client_dict = []
+        player_client_dict = {}
+        for a in range(len(player.hand)):
+            try:
+                player_client_dict[player.name].append(player.hand[a].name)
+            except:
+                player_client_dict[player.name] = [player.hand[a].name]
+
+        client_dict.append(player_client_dict)
+        client_dict.append(board.card_stack[-1].name) 
+        client_dict.append(board.color)
+        client_dict.append(game_logic.target)
+        client_dict.append(grab)
+
+        client_dict_pickle = pickle.dumps(client_dict)
+        display_funct.client_socket.sendall(client_dict_pickle)
+
+        print("sended")
+        if drop_again == True:
+            display_funct.wildplayed = True
+
+        if display_funct.cont3 >= 4:
+            display_funct.cont3_true = True
+#주석
+        if len(player.hand) == 1:
+            
+            test= False
+            display_funct.redraw_screen([(player, None)], board, players)
+
+            playing_1 = True
+            while playing_1:
+                stack_uno+=1
+                uno_time = 4000 - stack_uno
+                display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                uno_timer = game_font.render(str(uno_time), True, (255,255,255))
+                pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+                display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
+
+                if stack_uno>4000:
+                    test=True
+                    break
+
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == display_funct.space:
+                            playing_1 = False
+                            test=False
+                            
+                pygame.display.flip()
+
+            if test:
+                print("드로우")
+                player.grab_card(deck)
+                display_funct.redraw_screen([(players[0], None)], board, players)
+                test=False
+                    
+        display_funct.redraw_screen([(player, None)], board, players)
+
+    return (grab, turn_done)

@@ -20,4 +20,4 @@ def main():
         display_funct.title_screen()
 
 if __name__ == "__main__":
-    main() 
+    main()  

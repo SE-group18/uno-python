@@ -2493,7 +2493,19 @@ def story_screen():
             display_funct.redraw_hand_visble(player1, None)
             game_logic.game_loop(board1, deck1, [player1, player2AI])
     
-
+def wait(time):
+    done = False
+    stack_wait = 0
+    while not done:
+        stack_wait += 1
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        if stack_wait > time:
+            done = True
+            print("out")
+        
 
 ###################################### 멀티 방 #############################################
 
@@ -2793,9 +2805,11 @@ def host_screen(password,host_ip):
     
         pygame.display.flip()
 
+    pygame.time.delay(100)
     selected_ais[5] = 'start'
     serialized_data = pickle.dumps(selected_ais)
     display_funct.client_socket.sendall(serialized_data)
+    pygame.time.delay(100)
 
     board1 = game_classes.Board("board1")  
 

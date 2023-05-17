@@ -57,6 +57,7 @@ def wild_pick_4(board, deck, player, players):
     print("Trageted players hand size after: ", len(target.hand))
     # update targets hatval of player
     game_logic.update_hatval(player, target, 4)
+    game_logic.target = target.name
 
 
 def wild_color(board, deck, player):
@@ -91,6 +92,7 @@ def draw_2(board, deck, player, players):
     print("Trageted players hand size after: ", len(target.hand))
     # update targets hatval of player
     game_logic.update_hatval(player, target, 2)
+    game_logic.target = target.name
 
 
 def skip(board, deck, player, players):
@@ -109,6 +111,7 @@ def skip(board, deck, player, players):
     target.skip = True
     # update targets hatval of player
     game_logic.update_hatval(player, target, 1)
+    game_logic.target = target.name
 
 
 def reverse(board):
@@ -157,6 +160,7 @@ def draw_1(board, deck, player, players):
     print("Trageted players hand size after: ", len(target.hand))
     # update targets hatval of player
     game_logic.update_hatval(player, target, 1)
+    game_logic.target = target.name
 
 def card_played_type(board, deck, player, players):
     """

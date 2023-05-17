@@ -184,7 +184,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
             
 
             display_funct.redraw_screen([(players[0], None)], board, players)
-            pygame.time.delay(1200)
+            display_funct.wait(1000000)
              
 
 
@@ -243,7 +243,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
             
 
         display_funct.redraw_screen([(players[0], None)], board, players)
-        pygame.time.delay(1200)
+        display_funct.wait(1000000)
         Main_Decision_Tree.travel_Main_Decision_Tree(board, deck, player,
                                                          players, player.Main_Decision_Tree.Dec_Tree)
     elif played_type.isdigit():     # normal number card played

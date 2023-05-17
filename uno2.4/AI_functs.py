@@ -43,7 +43,7 @@ def play_win(board, deck, player, players):
         if card.color == "w":  # skip wild cards
             player.play_card(board, card_index)
             display_funct.redraw_screen([(players[0], None)], board, players)
-            pygame.time.delay(700)
+            display_funct.wait(1000000)
 
             # figure out what do within the game from AI played card
             AI_card_logic.AI_card_played_type(
@@ -227,7 +227,7 @@ def stop_winners(board, deck, player, players, possible_winner):
     player.play_card(board, hate_cards[0][1])
 
     display_funct.redraw_screen([(players[0], None)], board, players)
-    pygame.time.delay(700)
+    display_funct.wait(1000000)
 
 
     # figure out what do within the game from AI played card
