@@ -39,9 +39,12 @@ def play_win(board, deck, player, players):
     selected_color = fetch_most_common_color(player)  # O(n)`
 
     card_index = 0
+
+    hoxi = 0
     for card in player.hand:  # O(n)
         if card.color == "w":  # skip wild cards
             player.play_card(board, card_index)
+            hoxi = 1
             display_funct.redraw_screen([(players[0], None)], board, players)
             display_funct.wait(1000000)
 
@@ -52,20 +55,25 @@ def play_win(board, deck, player, players):
         card_index += 1
 
     # if one last non wild card remains
-    if len(player.hand) == 1:
-        for card in player.hand:
-            if card.color == board.color:
-                player.play_card(board, 0)
-            else:
-                player.grab_card(deck)
-                return
+    if hoxi == 0:
+        if len(player.hand) == 1:
+            for card in player.hand:
+                if card.color == board.color:
+                    print("play")
+                    player.play_card(board, 0)
+                    break
+                else:
+                    if len(player.hand) == 1:
+                        print("draws")
+                        player.grab_card(deck)
+                    return
 
-        # figure out what do within the game from AI played card
-        AI_card_logic.AI_card_played_type(
-            board, deck, player, players)  # O(n) or recuse Main_Decision_Tree
-        
-    else:
-        board.color = selected_color
+            # figure out what do within the game from AI played card
+            AI_card_logic.AI_card_played_type(
+                board, deck, player, players)  # O(n) or recuse Main_Decision_Tree
+            
+        else:
+            board.color = selected_color
 
 
 def fetch_most_common_color(player):

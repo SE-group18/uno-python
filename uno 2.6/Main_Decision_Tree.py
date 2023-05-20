@@ -157,12 +157,14 @@ def read_Dec_leaf_instruction(board, deck, player, players, Leaf_val):
 
     elif Leaf_val == "Play oldest playable card":
         (old_val, card_index) = AI_functs.fetch_oldest_card(board, player)  # O(n)
+        print('playable')
         player.play_card(board, card_index)
 
     elif Leaf_val == "Play highest hate playable card":
         (hate_val, hate_player) = AI_functs.fetch_hate_priority(
             player, players)  # O(n)
         hate_cards = AI_functs.fetch_hate_cards(board, player)  # O(n)
+        print("hate")
         player.play_card(board, hate_cards[0][1])
         # O(n) or recuse Main_Decision_Tree
         AI_card_logic.AI_card_played_type(
@@ -185,6 +187,7 @@ def read_Dec_leaf_instruction(board, deck, player, players, Leaf_val):
             board, deck, player, players, player.Card_Choose_Tree.Choose_Tree)
 
     elif Leaf_val == "Goto play_win":
+        print("playwin")
         AI_functs.play_win(board, deck, player, players)  # O(n)
 
 

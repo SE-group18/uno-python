@@ -124,6 +124,7 @@ def read_Card_Choose_Leaf_instruction(board, deck, player, players, Leaf_val):
     if Leaf_val == "Play only card":
 
         allowed_cards = card_logic.card_allowed(board, player)  # O(n)
+        print("only")
         player.play_card(board, allowed_cards[0])
 
     elif Leaf_val == "play wild, most common color":
@@ -131,6 +132,7 @@ def read_Card_Choose_Leaf_instruction(board, deck, player, players, Leaf_val):
         hand_index = 0
         for card in player.hand:  # O(n)
             if card.color == "w":
+                print("wild")
                 player.play_card(board, hand_index)
                 break
             hand_index += 1
@@ -144,6 +146,7 @@ def read_Card_Choose_Leaf_instruction(board, deck, player, players, Leaf_val):
 
         for i in allowed_cards:  # O(n)
             if player.hand[i].color == color_max:
+                print("common")
                 player.play_card(board, i)
                 break
 
@@ -156,6 +159,7 @@ def read_Card_Choose_Leaf_instruction(board, deck, player, players, Leaf_val):
 
         for i in allowed_cards:  # O(n)
             if player.hand[i].type == type_max:
+                print("common type")
                 player.play_card(board, i)
 
                 break

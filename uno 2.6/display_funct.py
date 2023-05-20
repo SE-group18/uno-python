@@ -1004,6 +1004,7 @@ def setting_screen():
                         image_scale()
                         pygame.display.set_mode((screen_width,screen_height))
                         pygame.mixer.music.set_volume(display_funct.mainsound*display_funct.sound/100)
+                        setsound()
                         config["screen_width"] = screen_width
                         config["screen_height"] = screen_height
                         config["sound"] = 5
@@ -2332,7 +2333,7 @@ def single_screen():
         print(a.name)
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
-    player1.grab_cards(deck1, 1)
+    player1.grab_cards(deck1, 5)
     playerAI_list = []
 
     i=2
@@ -2870,7 +2871,7 @@ def host_screen(password,host_ip):
 
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1Host")
-    player1.grab_cards(deck1, 7)
+    player1.grab_cards(deck1, 5)
     playerAI_list = []
     
     i=2

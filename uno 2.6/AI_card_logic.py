@@ -130,7 +130,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
     played_type = board.type
     played_color = board.color
 
-    print("Played:", played_color, played_type, "by:", player.name)
+    print("Played1212:", played_color, played_type, "by:", player.name)
 
 
     if played_color == "w":
@@ -178,7 +178,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
                 if test:
                     print("드로우 됨")
-                    player.grab_cards(deck,1)
+                    player.grab_card(deck)
                     
                     display_funct.redraw_screen([(players[0], None)], board, players)
                     test=False
@@ -211,6 +211,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                 print("player both send")
             except:
                 print("For Multi")
+
             display_funct.wait(1000000)
 
             Main_Decision_Tree.travel_Main_Decision_Tree(board, deck, player,
@@ -232,6 +233,9 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
         print("king played, play again")
         display_funct.redraw_screen([(players[0], None)], board, players)
 
+        if player.hand == []:  # catch if the player has won
+            return
+        
         if len(player.hand) == 1:
             test= False
             playing = True
@@ -261,7 +265,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
             if test:
                 print("드로우 됨")
-                player.grab_cards(deck,1)
+                player.grab_card(deck)
                 
                 display_funct.redraw_screen([(players[0], None)], board, players)
                 test=False

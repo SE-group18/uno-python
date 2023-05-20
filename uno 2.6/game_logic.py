@@ -25,6 +25,7 @@ paused = False
 # global list containing the winners in placement order
 global winners
 winners = []
+winners_multi = []
 uno_stack = 0
 
 def update_hatval(player, target, hate_increase=1):
@@ -122,6 +123,17 @@ def check_winners(player):
         print(player.name, "won and leaves this round!")
         winners.append(player)
 
+def check_winners_multi(player):
+    """
+    Checks to see if a player has met the conditions of winning a round
+    (having no more cards in hand). If so the player is appened onto the global
+    list winners.
+
+    O(1) runtime
+    """
+    if player.hand == []:  # conditions for winning!
+        print(player.name, "won and leaves this round!")
+        game_logic.winners_multi.append(player)
 
 def check_game_done(players, turn_tot):
     """
@@ -480,6 +492,10 @@ def Client_Receive(client_socket,board, players, deck, deck1):
     game_logic.current_turn = board_dict[3][8]
     game_logic.client_received = True
     
+    display_funct.turn_turn = board_dict[3]
+
+    print(display_funct.turn_turn)
+
     print("Thread Client Exit")
 
 played_color = 0
@@ -522,6 +538,7 @@ def game_loop_C(board, deck, players):
     turn_tot = 0
     drop_again = False
     board.update_Board(deck.grab_card())
+    
    
    
     while True:  
@@ -530,6 +547,7 @@ def game_loop_C(board, deck, players):
         turn_tot += 1
         print("Turn number:", turn_tot)
         print("PLAYER: ", player.name, "TURN")
+        display_funct.turn_turn = player.name
 
         randcolor=['y','r','b','g']
         randcolor1=['yellow','red','blue','green']
@@ -603,6 +621,7 @@ def game_loop_host(board, deck, players):
     turn_tot = 0
     drop_again = False
     board.update_Board(deck.grab_card())
+    
 
     board_dict = []
     board_dict.append(board.name)
@@ -634,6 +653,8 @@ def game_loop_host(board, deck, players):
 
         print("Turn number:", turn_tot)
         print("PLAYER: ", player.name, "TURN")
+
+        display_funct.turn_turn = player.name
 
         if player.skip:
             if player.AI:
@@ -671,6 +692,7 @@ def game_loop_host(board, deck, players):
         elif player.Client:
             print("클라이언트 플레이 대기중")
             done = False
+            display_funct.redraw_screen([(players[0], None)], board, players)
             while not done:
                 board_dict = []
                 board_dict.append(board.name)
@@ -700,17 +722,7 @@ def game_loop_host(board, deck, players):
                 s_r = threading.Thread(target=Server_Receive, args=(display_funct.client_socket, board, player, deck1))
                 s_r.start()
 
-                Thread_done = False
-                while not Thread_done:
-                    for event in pygame.event.get():
-                        if event.type == pygame.QUIT:
-                            pygame.quit()
-                            exit()
-                    
-                    if game_logic.server_received == True:
-                        print("done")
-                        Thread_done = True
-                        game_logic.server_received = False
+                multi_wait()
 
                 if game_logic.grabbed == True:
                     display_funct.redraw_screen([(players[0], None)], board, players)
@@ -754,7 +766,7 @@ def game_loop_host(board, deck, players):
                 else:
                     done = True
 
-                
+                check_winners(player)
 
                 display_funct.redraw_screen([(players[0], None)], board, players)
             display_funct.wait(500000)
@@ -789,7 +801,6 @@ def game_loop_host(board, deck, players):
         # check if the player won this round and properly remove them from the
         # game. Also check if the game is done "only one player left".
         if player in winners:
-            players.remove(player)
             restart_bool = check_game_done(players, turn_tot)
 
             # leaves this instance of the game logic loop back to PY-UNO start
@@ -830,23 +841,27 @@ def game_loop_client():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+
         c_r = threading.Thread(target=Client_Receive, args=(display_funct.client_socket, board, players, deck, deck1))
         c_r.start()
 
-        Thread_done = False
-        while not Thread_done:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit()
-            
-            if game_logic.client_received == True:
-                print("done")
-                Thread_done = True
-                game_logic.client_received = False
+        multi_wait()
 
         print("redraw")
         display_funct.redraw_screen([(players[My_turn], None)], board, players)
+        
+
+        for player in players:
+            check_winners_multi(player)
+            if player in game_logic.winners_multi:
+                players.remove(player)
+                restart_bool = check_game_done(players, 1)
+
+                # leaves this instance of the game logic loop back to PY-UNO start
+                # in which a new game is started
+                if restart_bool:
+                    return
+
 
         if game_logic.current_turn == 'C':
             print("My turn")
@@ -861,7 +876,7 @@ def game_loop_client():
 
                 if turn_done == True or grab == True:
                     done = True
-
+            
         else:
             print("Not my turn")
 
@@ -1115,3 +1130,34 @@ def extern_player_turn_client(board, deck, player, players, turn):
         display_funct.redraw_screen([(player, None)], board, players)
 
     return (grab, turn_done)
+
+def multi_wait():
+    done = False
+    timer_start = True
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        if timer_start == True:
+            start_ticks_multi = pygame.time.get_ticks()
+            timer_start = False
+
+        time = int(15 - (pygame.time.get_ticks() - start_ticks_multi) / 1000)
+        if time < 0:
+            time = 0
+        timer = game_font.render("timer: " + str(time), True, (255,255,255))
+        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+        display_funct.screen.blit(timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
+        pygame.display.flip()
+
+        if game_logic.server_received == True:
+            print("done")
+            done = True
+            game_logic.server_received = False
+
+        if game_logic.client_received == True:
+            print("done")
+            done = True
+            game_logic.client_received = False

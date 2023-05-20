@@ -13,7 +13,7 @@ def make_AI_basic(deck, AI_name, mem_depth=0):
     Returns: AI_player_gen: a simple generated AI
     """
     AI_player_gen = game_classes.Player(AI_name)
-    AI_player_gen.grab_cards(deck, 7)
+    AI_player_gen.grab_cards(deck, 5)
 
     AI_player_gen.AI = True
     AI_player_gen.Main_Decision_Tree = Main_Decision_Tree.Main_Decision_Tree(AI_name)
@@ -30,7 +30,7 @@ def make_Client(deck, name):
     Returns: AI_player_gen: a simple generated AI
     """
     Client_player = game_classes.Player(name)
-    Client_player.grab_cards(deck, 7)
+    Client_player.grab_cards(deck, 5)
 
     Client_player.Client = True
 
