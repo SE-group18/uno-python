@@ -16,6 +16,7 @@ from datetime import datetime
 import socket
 import pickle
 import threading
+from sys import exit
 
 pygame.init()
 

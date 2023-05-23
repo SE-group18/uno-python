@@ -5,6 +5,7 @@ import display_funct
 import pygame
 import pickle
 import random
+from sys import exit
 
 def update_mem_trees(board, deck, player, players):
     pass

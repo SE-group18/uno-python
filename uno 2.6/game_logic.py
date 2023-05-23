@@ -14,6 +14,7 @@ import game_classes
 import asyncio
 import threading
 import deck_gen
+from sys import exit
 
 
 pygame.init()

@@ -1,6 +1,7 @@
 import display_funct
 import os
 import pygame
+from sys import exit
 
 def get_keypress(event):
     """
