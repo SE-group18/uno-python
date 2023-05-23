@@ -429,7 +429,40 @@ def game_loop(board, deck, players):
 
         elif player.AI:  # handle for an AI player
             extern_AI_player_turn(board, deck, player, players, turn)
+            stack_uno = 0
+            if len(player.hand) == 1:
+                test= False
+                playing = True
+                while playing:
+                    stack_uno+=random.randint(1,4)
+                    display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                    
+                    uno_time = 4000 - stack_uno
+                    display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
+                    uno_timer = game_logic.game_font.render(str(uno_time), True, (255,255,255))
+                    pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1400/1600,display_funct.screen_height*530/900,150,70])
+                    display_funct.screen.blit(uno_timer, (display_funct.screen_width*1400/1600,display_funct.screen_height*530/900))
 
+                    if stack_uno>4000:
+                        display_funct.unoother_played = True
+                        test=False
+                        break
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            exit()
+                        elif event.type == pygame.KEYDOWN:
+                            if event.key == display_funct.space:
+                                playing = False
+                                test = True
+                    pygame.display.flip()
+
+                if test:
+                    print("드로우 됨")
+                    player.grab_card(deck)
+                    
+                    display_funct.redraw_screen([(players[0], None)], board, players)
+                    test=False
         else:            # handle for a human player
             (update, turn_done) = extern_player_turn(board, deck,
                                                      player, players, turn)
