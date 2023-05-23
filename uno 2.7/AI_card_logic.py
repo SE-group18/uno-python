@@ -150,6 +150,31 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
         else:
             print("Wild played, playing again.")
             display_funct.redraw_screen([(players[0], None)], board, players)
+            
+            try:
+                board_dict = []
+                board_dict.append(board.name)
+                board_dict.append(board.turn_iterator)
+                board_dict.append(board.card_stack[-1].name)
+                board_dict.append(player.name)
+                board_dict.append(board.color)
+
+                player_dict = {}
+                for playersa in players:
+                    player_dict[playersa.name] = []
+                    for a in range(len(playersa.hand)):
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+
+
+                both_dict = []
+                both_dict.append(board_dict)
+                both_dict.append(player_dict)
+
+                both_dict_pickle = pickle.dumps(both_dict)         
+                display_funct.client_socket.sendall(both_dict_pickle)
+                print("player both send")
+            except:
+                print("For Multi")
 
             if len(player.hand) == 1:
                 test= False
@@ -187,31 +212,6 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
             
 
             display_funct.redraw_screen([(players[0], None)], board, players)
-            
-            try:
-                board_dict = []
-                board_dict.append(board.name)
-                board_dict.append(board.turn_iterator)
-                board_dict.append(board.card_stack[-1].name)
-                board_dict.append(player.name)
-                board_dict.append(board.color)
-
-                player_dict = {}
-                for playersa in players:
-                    player_dict[playersa.name] = []
-                    for a in range(len(playersa.hand)):
-                        player_dict[playersa.name].append(playersa.hand[a].name)
-
-
-                both_dict = []
-                both_dict.append(board_dict)
-                both_dict.append(player_dict)
-
-                both_dict_pickle = pickle.dumps(both_dict)         
-                display_funct.client_socket.sendall(both_dict_pickle)
-                print("player both send")
-            except:
-                print("For Multi")
 
             display_funct.wait(1000000)
 
@@ -237,6 +237,31 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
         if player.hand == []:  # catch if the player has won
             return
         
+        try:
+            board_dict = []
+            board_dict.append(board.name)
+            board_dict.append(board.turn_iterator)
+            board_dict.append(board.card_stack[-1].name)
+            board_dict.append(player.name)
+            board_dict.append(board.color)
+
+            player_dict = {}
+            for playersa in players:
+                player_dict[playersa.name] = []
+                for a in range(len(playersa.hand)):
+                    player_dict[playersa.name].append(playersa.hand[a].name)
+
+
+            both_dict = []
+            both_dict.append(board_dict)
+            both_dict.append(player_dict)
+
+            both_dict_pickle = pickle.dumps(both_dict)         
+            display_funct.client_socket.sendall(both_dict_pickle)
+            print("player both send")
+        except:
+            print("For multi")
+
         if len(player.hand) == 1:
             test= False
             playing = True
@@ -270,31 +295,6 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                 
                 display_funct.redraw_screen([(players[0], None)], board, players)
                 test=False
-        
-        try:
-            board_dict = []
-            board_dict.append(board.name)
-            board_dict.append(board.turn_iterator)
-            board_dict.append(board.card_stack[-1].name)
-            board_dict.append(player.name)
-            board_dict.append(board.color)
-
-            player_dict = {}
-            for playersa in players:
-                player_dict[playersa.name] = []
-                for a in range(len(playersa.hand)):
-                    player_dict[playersa.name].append(playersa.hand[a].name)
-
-
-            both_dict = []
-            both_dict.append(board_dict)
-            both_dict.append(player_dict)
-
-            both_dict_pickle = pickle.dumps(both_dict)         
-            display_funct.client_socket.sendall(both_dict_pickle)
-            print("player both send")
-        except:
-            print("For multi")
 
         display_funct.redraw_screen([(players[0], None)], board, players)
         display_funct.wait(1000000)
