@@ -1,6 +1,6 @@
 import deck_gen
 import pygame
-
+import os
 
 class Player:
 
@@ -42,27 +42,8 @@ class Player:
     def push(self, player):
         for a in player:
             print(a)
-    #
-    # def look_card(self, card_ID):
-    #     return self.hand[card_ID].name
-    #
-    # def look_hand(self):
-    #     L = []
-    #     for i in range(len(self.hand)):
-    #         L.append(self.hand[i].name)
-    #     return L
 
-    # def discard(self, card_ID=None):
-    #     if self.hand == []:
-    #         print("Can't discard.... no cards")
-    #         return
-    #     if card_ID is None:
-    #         self.hand.pop()
-    #         return
-    #     self.hand.pop(card_ID)
-
-
-class Deck:  # calss defining a card deck
+class Deck:
 
     def __init__(self, name, input_deck):
         self.name = name
@@ -73,8 +54,8 @@ class Deck:  # calss defining a card deck
             card.set_Owner(self.name)
             self.deck.append(card)
 
-    def grab_card(self):  # grab a card from the deck
-        if self.deck == []:  # self regeneration catch
+    def grab_card(self):
+        if self.deck == []:
             print("deck is empty...")
             print("regenerating deck...")
             self.deck = deck_gen.gen_rand_deck(self.name, 1).deck
@@ -111,8 +92,6 @@ class Board:
 
 
 class Card:
-    # class method defining a card and provides pygame data callouts
-
     def __init__(self, name, filename, owner=None, colormode = False):
         self.name = name
         self.card_data = pygame.image.load(filename)
@@ -123,14 +102,8 @@ class Card:
 
         self.old_val = 0
 
-    def set_Owner(self, owner):  # set/change card ownership
+    def set_Owner(self, owner):
         self.Owner = owner
-
-    # def check_ownership(self, owner_c):  # check if player owns this card
-    #     if owner_c == self.Owner:
-    #         return True
-    #     else:
-    #         return False
 
     def play_card(self, boardname):
         self.set_Owner(None)

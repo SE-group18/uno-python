@@ -4,6 +4,7 @@ import Main_Decision_Tree
 import display_funct
 import pygame
 import pickle
+import random
 
 def update_mem_trees(board, deck, player, players):
     pass
@@ -153,7 +154,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                 test= False
                 playing = True
                 while playing:
-                    stack_uno += 1
+                    stack_uno+=random.randint(1,4)
                     display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                     
                     uno_time = 4000 - stack_uno
@@ -196,11 +197,10 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
                 player_dict = {}
                 for playersa in players:
+                    player_dict[playersa.name] = []
                     for a in range(len(playersa.hand)):
-                        try:
-                            player_dict[playersa.name].append(playersa.hand[a].name)
-                        except:
-                            player_dict[playersa.name] = [playersa.hand[a].name]
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+
 
                 both_dict = []
                 both_dict.append(board_dict)
@@ -240,7 +240,7 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
             test= False
             playing = True
             while playing:
-                stack_uno += 1
+                stack_uno+=random.randint(1,4)
                 display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                 
                 uno_time = 4000 - stack_uno
@@ -280,11 +280,10 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
 
             player_dict = {}
             for playersa in players:
+                player_dict[playersa.name] = []
                 for a in range(len(playersa.hand)):
-                    try:
-                        player_dict[playersa.name].append(playersa.hand[a].name)
-                    except:
-                        player_dict[playersa.name] = [playersa.hand[a].name]
+                    player_dict[playersa.name].append(playersa.hand[a].name)
+
 
             both_dict = []
             both_dict.append(board_dict)

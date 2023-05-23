@@ -1,10 +1,18 @@
 import threading
 
+import pygame
 
-a = [1,2,3,4]
+# Pygame 초기화
+pygame.init()
 
-print(a)
+# 창 크기 설정
+width, height = 800, 600
+screen = pygame.display.set_mode((width, height))
 
-a.pop(0)
+print(pygame.key.name(pygame.K_UP))
 
-print(a)
+
+#while True:
+#    for event in pygame.event.get():
+#        if event.type == pygame.KEYDOWN:
+#            print(event.key)

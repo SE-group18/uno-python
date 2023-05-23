@@ -2,7 +2,7 @@ import card_logic
 import display_funct
 import game_control
 import Main_Decision_Tree
-import pygame
+import pygame   
 import game_logic
 from pygame.locals import *
 import PY_UNO
@@ -14,6 +14,7 @@ import game_classes
 import asyncio
 import threading
 import deck_gen
+
 
 pygame.init()
 game_font = pygame.font.Font(None, 40)
@@ -123,7 +124,7 @@ def check_winners(player):
         print(player.name, "won and leaves this round!")
         winners.append(player)
 
-def check_winners_multi(player):
+def check_winners_multi(player, players):
     """
     Checks to see if a player has met the conditions of winning a round
     (having no more cards in hand). If so the player is appened onto the global
@@ -131,9 +132,15 @@ def check_winners_multi(player):
 
     O(1) runtime
     """
-    if player.hand == []:  # conditions for winning!
-        print(player.name, "won and leaves this round!")
-        game_logic.winners_multi.append(player)
+    if player.name[8] == 'C':
+        if player.hand == []:  # conditions for winning!
+            print(player.name, "won and leaves this round!")
+            game_logic.winners.append(players[0])
+
+    else:
+        if player.hand == []:  # conditions for winning!
+            print(player.name, "won and leaves this round!")
+            game_logic.winners.append(player[1])
 
 def check_game_done(players, turn_tot):
     """
@@ -152,6 +159,15 @@ def check_game_done(players, turn_tot):
     state so this is likely no a problem.
     """
     global winners
+
+    try:
+        display_funct.client_socket.close()
+    except:
+        pass
+    try:
+        display_funct.server_socket.close()
+    except:
+        pass
 
     if len(players) <= display_funct.player_total-1:
         print("\n\ngame done!!!!!")
@@ -198,7 +214,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
         test= False
         playing = True
         while playing:
-            stack_uno += 1
+            stack_uno+=random.randint(1,4)
             display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
             
             uno_time = 4000 - stack_uno
@@ -297,7 +313,7 @@ def extern_player_turn(board, deck, player, players, turn):
 
             playing_1 = True
             while playing_1:
-                stack_uno+=1
+                stack_uno+=random.randint(1,4)
                 uno_time = 4000 - stack_uno
                 display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                 uno_timer = game_font.render(str(uno_time), True, (255,255,255))
@@ -462,66 +478,75 @@ client_received = False
 server_received = False
 
 def Client_Receive(client_socket,board, players, deck, deck1):
-    print("Thread Client_Receive Start")
+    try:
+        print("Thread Client_Receive Start")
 
-    serialized_dict = client_socket.recv(4096)
-    both_dict = pickle.loads(serialized_dict)  # 1024는 수신 버퍼의 크기를 나타냄
+        serialized_dict = client_socket.recv(4096)
+        both_dict = pickle.loads(serialized_dict)  # 1024는 수신 버퍼의 크기를 나타냄
 
-    board_dict = both_dict[0]
-    player_dict = both_dict[1]
+        board_dict = both_dict[0]
+        player_dict = both_dict[1]
 
-    print(3)
-    board.turn_iterator = board_dict[1]
-    board.update_Board(deck1.grab_card_multi(board_dict[2]))
-    board.color = board_dict[4]
+        print(3)
+        board.turn_iterator = board_dict[1]
+        board.update_Board(deck1.grab_card_multi(board_dict[2]))
+        board.color = board_dict[4]
 
-    result = [len(value) for value in player_dict.values()]
-    print(player_dict)
+        result = [len(value) for value in player_dict.values()]
+        print(player_dict)
 
-    for a in range(len(players)):
-        players[a].hand = []
-        if players[a].name[8] == "C":
-            for i in player_dict[players[a].name]:
-                players[a].grab_card_multi(deck1,i)
-        else:
-            players[a].grab_cards(deck,result[a])
+        for a in range(len(players)):
+            players[a].hand = []
+            if players[a].name[8] == "C":
+                for i in player_dict[players[a].name]:
+                    players[a].grab_card_multi(deck1,i)
+            else:
+                players[a].grab_cards(deck,result[a])
 
-    print(player_dict)
-    print(board_dict)
+        print(player_dict)
+        print(board_dict)
 
-    game_logic.current_turn = board_dict[3][8]
-    game_logic.client_received = True
-    
-    display_funct.turn_turn = board_dict[3]
+        game_logic.current_turn = board_dict[3][8]
+        game_logic.client_received = True
+        
+        display_funct.turn_turn = board_dict[3]
 
-    print(display_funct.turn_turn)
+        print(display_funct.turn_turn)
 
-    print("Thread Client Exit")
+        print("Thread Client Exit")
+    except:
+        print("test")
 
 played_color = 0
 played_type = 0
 grabbed = 0
 played_card = 0
 
-def Server_Receive(client_socket,board,player,deck1):
-    print("Thread Server_Receive Start")
-    client_played = client_socket.recv(4096)
-    client_play = pickle.loads(client_played)
-    player.hand=[]
-    for card in list(client_play[0].values()):
-        for a in card:
-            player.hand.append(deck1.grab_card_multi(a))
-    board.update_Board(deck1.grab_card_multi(client_play[1]))
-    board.color = client_play[2]
+def Server_Receive(client_socket,board,player,deck1, players):
+    try:
+        print("Thread Server_Receive Start")
+        client_played = client_socket.recv(4096)
+        client_play = pickle.loads(client_played)
+        player.hand=[]
+        for card in list(client_play[0].values()):
+            for a in card:
+                player.hand.append(deck1.grab_card_multi(a))
+        board.update_Board(deck1.grab_card_multi(client_play[1]))
+        board.color = client_play[2]
 
-    game_logic.played_color = client_play[1][0]
-    game_logic.played_type = client_play[1][2]
-    game_logic.grabbed = client_play[4]
-    game_logic.played_card = client_play[3]
+        game_logic.played_color = client_play[1][0]
+        game_logic.played_type = client_play[1][2]
+        game_logic.grabbed = client_play[4]
+        game_logic.played_card = client_play[3]
 
-    game_logic.server_received = True
-    
-    print("Thread Server Exit")
+        game_logic.server_received = True
+        
+        print("Thread Server Exit")
+    except:
+        print("Client Exit")
+        game_logic.server_received = True
+        display_funct.client_socket.close()
+        players.remove(player)
     
 
 
@@ -611,8 +636,9 @@ def game_loop_C(board, deck, players):
         turn = compute_turn(players, turn, board.turn_iterator)
 
 
-
+get_out = False
 def game_loop_host(board, deck, players):
+    display_funct.player_total = 0
     for i in players:
         display_funct.player_total += 1
 
@@ -632,11 +658,10 @@ def game_loop_host(board, deck, players):
 
     player_dict = {}
     for player in players:
+        player_dict[player.name] = []
         for a in range(len(player.hand)):
-            try:
-                player_dict[player.name].append(player.hand[a].name)
-            except:
-                player_dict[player.name] = [player.hand[a].name]
+            player_dict[player.name].append(player.hand[a].name)
+
 
     both_dict = []
     both_dict.append(board_dict)
@@ -663,37 +688,123 @@ def game_loop_host(board, deck, players):
             player.skip = False
 
         elif player.AI:  # handle for an AI player
-            board_dict = []
-            board_dict.append(board.name)
-            board_dict.append(board.turn_iterator)
-            board_dict.append(board.card_stack[-1].name)
-            board_dict.append(player.name)
-            board_dict.append(board.color)
-
-            player_dict = {}
-
-
-            for playersa in players:
-                for a in range(len(playersa.hand)):
-                    try:
-                        player_dict[playersa.name].append(playersa.hand[a].name)
-                    except:
-                        player_dict[playersa.name] = [playersa.hand[a].name]
-
-            both_dict = []
-            both_dict.append(board_dict)
-            both_dict.append(player_dict)
-
-            both_dict_pickle = pickle.dumps(both_dict)         
-            display_funct.client_socket.sendall(both_dict_pickle)
-            print("player both send")
             extern_AI_player_turn(board, deck, player, players, turn)
+
+            try:
+                board_dict = []
+                board_dict.append(board.name)
+                board_dict.append(board.turn_iterator)
+                board_dict.append(board.card_stack[-1].name)
+                board_dict.append(player.name)
+                board_dict.append(board.color)
+
+                player_dict = {}
+
+                for playersa in players:
+                    player_dict[playersa.name] = []
+                    for a in range(len(playersa.hand)):
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+
+                both_dict = []
+                both_dict.append(board_dict)
+                both_dict.append(player_dict)
+
+                both_dict_pickle = pickle.dumps(both_dict)         
+                display_funct.client_socket.sendall(both_dict_pickle)
+                print("player AI both send")
+            except:
+                print("AI Client exit")
+        
         
         elif player.Client:
-            print("클라이언트 플레이 대기중")
-            done = False
-            display_funct.redraw_screen([(players[0], None)], board, players)
-            while not done:
+            try:
+                print("클라이언트 플레이 대기중")
+                done = False
+                display_funct.redraw_screen([(players[0], None)], board, players)
+                while not done:
+                    board_dict = []
+                    board_dict.append(board.name)
+                    board_dict.append(board.turn_iterator)
+                    board_dict.append(board.card_stack[-1].name)
+                    board_dict.append(player.name)
+                    board_dict.append(board.color)
+
+                    player_dict = {}
+
+
+                    for playersa in players:
+                        for a in range(len(playersa.hand)):
+                            try:
+                                player_dict[playersa.name].append(playersa.hand[a].name)
+                            except:
+                                player_dict[playersa.name] = [playersa.hand[a].name]
+
+                    both_dict = []
+                    both_dict.append(board_dict)
+                    both_dict.append(player_dict)
+
+                    both_dict_pickle = pickle.dumps(both_dict)         
+                    display_funct.client_socket.sendall(both_dict_pickle)
+                    print("player Client both send")
+
+                    s_r = threading.Thread(target=Server_Receive, args=(display_funct.client_socket, board, player, deck1,players))
+                    s_r.start()
+
+                    multi_wait()
+
+                    if game_logic.grabbed == True:
+                        display_funct.redraw_screen([(players[0], None)], board, players)
+                        break
+
+                    if played_color == "w":
+                        for a in range(len(players)):
+                            if  players[a].name == game_logic.played_card:
+                                target = a
+                        if played_type == "d":      # wild choose color draw 4 card played
+                            players[target].grab_cards(deck, 4)
+                        elif played_type == "a":
+                            for play in players:
+                                if play.name == player.name:
+                                    pass
+                                else:
+                                    play.grab_card(deck)
+        
+                                
+
+                    elif played_type == "p":        # draw 2 card played
+                        for a in range(len(players)):
+                            if  players[a].name == game_logic.played_card:
+                                target = a
+                        players[target].grab_cards(deck, 2)
+                        done = True
+                    elif played_type == "s":        # skip turn card played
+                        for a in range(len(players)):
+                            if  players[a].name == game_logic.played_card:
+                                target = a
+                        players[target].skip = True
+                        done = True
+                    elif played_type == "d":
+                        for a in range(len(players)):
+                            if  players[a].name == game_logic.played_card:
+                                target = a
+                        players[target].grab_cards(deck, 1)
+                        done = True
+                    elif played_type == "k":
+                        pass
+                    else:
+                        done = True
+
+                    check_winners(player)
+
+                    display_funct.redraw_screen([(players[0], None)], board, players)
+                display_funct.wait(500000)
+
+            except:
+                display_funct.client_socket.close()
+                players.remove(player)
+
+        else:            # handle for a human player
+            try:
                 board_dict = []
                 board_dict.append(board.name)
                 board_dict.append(board.turn_iterator)
@@ -718,89 +829,15 @@ def game_loop_host(board, deck, players):
                 both_dict_pickle = pickle.dumps(both_dict)         
                 display_funct.client_socket.sendall(both_dict_pickle)
                 print("player both send")
-
-                s_r = threading.Thread(target=Server_Receive, args=(display_funct.client_socket, board, player, deck1))
-                s_r.start()
-
-                multi_wait()
-
-                if game_logic.grabbed == True:
-                    display_funct.redraw_screen([(players[0], None)], board, players)
-                    break
-
-                if played_color == "w":
-                    for a in range(len(players)):
-                        if  players[a].name == game_logic.played_card:
-                            target = a
-                    if played_type == "d":      # wild choose color draw 4 card played
-                        players[target].grab_cards(deck, 4)
-                    elif played_type == "a":
-                        for play in players:
-                            if play.name == player.name:
-                                pass
-                            else:
-                                play.grab_card(deck)
-    
-                            
-
-                elif played_type == "p":        # draw 2 card played
-                    for a in range(len(players)):
-                        if  players[a].name == game_logic.played_card:
-                            target = a
-                    players[target].grab_cards(deck, 2)
-                    done = True
-                elif played_type == "s":        # skip turn card played
-                    for a in range(len(players)):
-                        if  players[a].name == game_logic.played_card:
-                            target = a
-                    players[target].skip = True
-                    done = True
-                elif played_type == "d":
-                    for a in range(len(players)):
-                        if  players[a].name == game_logic.played_card:
-                            target = a
-                    players[target].grab_cards(deck, 1)
-                    done = True
-                elif played_type == "k":
-                    pass
-                else:
-                    done = True
-
-                check_winners(player)
-
-                display_funct.redraw_screen([(players[0], None)], board, players)
-            display_funct.wait(500000)
-
-        else:            # handle for a human player
-            board_dict = []
-            board_dict.append(board.name)
-            board_dict.append(board.turn_iterator)
-            board_dict.append(board.card_stack[-1].name)
-            board_dict.append(player.name)
-            board_dict.append(board.color)
-
-            player_dict = {}
-
-
-            for playersa in players:
-                for a in range(len(playersa.hand)):
-                    try:
-                        player_dict[playersa.name].append(playersa.hand[a].name)
-                    except:
-                        player_dict[playersa.name] = [playersa.hand[a].name]
-
-            both_dict = []
-            both_dict.append(board_dict)
-            both_dict.append(player_dict)
-
-            both_dict_pickle = pickle.dumps(both_dict)         
-            display_funct.client_socket.sendall(both_dict_pickle)
-            print("player both send")
+            except:
+                print("Client is out")
             (update, turn_done) = extern_player_turn_host(board, deck,
                                                      player, players, turn)
         # check if the player won this round and properly remove them from the
         # game. Also check if the game is done "only one player left".
         if player in winners:
+
+            players.remove(player)
             restart_bool = check_game_done(players, turn_tot)
 
             # leaves this instance of the game logic loop back to PY-UNO start
@@ -813,6 +850,7 @@ def game_loop_host(board, deck, players):
 
 
 current_turn = ''
+
 def game_loop_client():
 
     serialized_dict = display_funct.client_socket.recv(4096)
@@ -824,9 +862,11 @@ def game_loop_client():
     board = game_classes.Board("board1")
 
     players = []
+    display_funct.player_total = 0
     for a in range(len(list(player_dict.keys()))):
         player_ = game_classes.Player(list(player_dict.keys())[a])
         players.append(player_)
+        display_funct.player_total += 1
 
     My_turn = 0
     for a in range(len(list(player_dict.keys()))):
@@ -852,8 +892,8 @@ def game_loop_client():
         
 
         for player in players:
-            check_winners_multi(player)
-            if player in game_logic.winners_multi:
+            check_winners_multi(player,players)
+            if player in winners:
                 players.remove(player)
                 restart_bool = check_game_done(players, 1)
 
@@ -876,6 +916,16 @@ def game_loop_client():
 
                 if turn_done == True or grab == True:
                     done = True
+
+            for player in players:
+                if player in winners:
+                    players.remove(player)
+                    restart_bool = check_game_done(players, 1)
+
+                    # leaves this instance of the game logic loop back to PY-UNO start
+                    # in which a new game is started
+                    if restart_bool:
+                        return
             
         else:
             print("Not my turn")
@@ -931,28 +981,31 @@ def extern_player_turn_host(board, deck, player, players, turn):
             
         print(board.card_stack[-1].name)
 
-        board_dict = []
-        board_dict.append(board.name)
-        board_dict.append(board.turn_iterator)
-        board_dict.append(board.card_stack[-1].name)
-        board_dict.append(player.name)
-        board_dict.append(board.color)
+        try:
+            board_dict = []
+            board_dict.append(board.name)
+            board_dict.append(board.turn_iterator)
+            board_dict.append(board.card_stack[-1].name)
+            board_dict.append(player.name)
+            board_dict.append(board.color)
 
-        player_dict = {}
-        for playersa in players:
-            for a in range(len(playersa.hand)):
-                try:
+            player_dict = {}
+            for playersa in players:
+                player_dict[playersa.name] = []
+                for a in range(len(playersa.hand)):
                     player_dict[playersa.name].append(playersa.hand[a].name)
-                except:
-                    player_dict[playersa.name] = [playersa.hand[a].name]
 
-        both_dict = []
-        both_dict.append(board_dict)
-        both_dict.append(player_dict)
+                
 
-        both_dict_pickle = pickle.dumps(both_dict)         
-        display_funct.client_socket.sendall(both_dict_pickle)
-        print("player both send")
+            both_dict = []
+            both_dict.append(board_dict)
+            both_dict.append(player_dict)
+
+            both_dict_pickle = pickle.dumps(both_dict)         
+            display_funct.client_socket.sendall(both_dict_pickle)
+            print("player both send")
+        except:
+            print("My turn Client Exit")
 
         if drop_again == True:
             display_funct.wildplayed = True
@@ -969,7 +1022,7 @@ def extern_player_turn_host(board, deck, player, players, turn):
 
             playing_1 = True
             while playing_1:
-                stack_uno+=1
+                stack_uno+=random.randint(1,4)
                 uno_time = 4000 - stack_uno
                 display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                 uno_timer = game_font.render(str(uno_time), True, (255,255,255))
@@ -1042,7 +1095,7 @@ def extern_player_turn_client(board, deck, player, players, turn):
             (update, selected, turn_done, grab) = intern_player_turn(
                 board, deck, player,players, allowed_card_list, selected)
         
-            check_winners(player)
+            check_winners_multi(player,players)
 
             update = check_update(board, allowed_card_list, selected,
                                   player, players, update)
@@ -1099,7 +1152,7 @@ def extern_player_turn_client(board, deck, player, players, turn):
 
             playing_1 = True
             while playing_1:
-                stack_uno+=1
+                stack_uno+=random.randint(1,4)
                 uno_time = 4000 - stack_uno
                 display_funct.screen.blit(display_funct.uno_on_button, (display_funct.screen_width*1200/1600,display_funct.screen_height*495/900))
                 uno_timer = game_font.render(str(uno_time), True, (255,255,255))
@@ -1161,3 +1214,5 @@ def multi_wait():
             print("done")
             done = True
             game_logic.client_received = False
+
+        

@@ -559,7 +559,7 @@ def draw_winners(winners, turn_tot):
     title_font = pygame.font.SysFont('malgungothic', 50)
     screen.fill(black)
     for player in winners:
-        if player.name == 'player_1':
+        if player.name == 'player_1' or player.name == 'player_1Host':
             screen.blit(resultwin_button,(screen_width*328.5/1600,screen_height/9))
             display_funct.winplay.play()
             if display_funct.instorymode == True and display_funct.cur_stage == 1:
@@ -1043,6 +1043,7 @@ def setting_screen():
 def keyset_screen():
     keysetting = True
     display_funct.current = 1
+    key_font = pygame.font.SysFont('malgungothic', 20)
     while keysetting:
         screen.fill(black)
         screen.blit(keysetoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
@@ -1065,6 +1066,19 @@ def keyset_screen():
             screen.blit(check_on_button, (display_funct.screen_width*882.5/1600,display_funct.screen_height*575/900))
         elif display_funct.current == 6:
             screen.blit(check_on_button, (display_funct.screen_width*882.5/1600,display_funct.screen_height*675/900))
+
+        key = key_font.render(pygame.key.name(display_funct.up), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*175/900))
+        key = key_font.render(pygame.key.name(display_funct.down), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*275/900))
+        key = key_font.render(pygame.key.name(display_funct.right), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*375/900))
+        key = key_font.render(pygame.key.name(display_funct.left), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*475/900))
+        key = key_font.render(pygame.key.name(display_funct.space), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*575/900))
+        key = key_font.render(pygame.key.name(display_funct.esc), True, (255, 255, 255))
+        screen.blit(key, (display_funct.screen_width*782.5/1600,display_funct.screen_height*675/900))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1119,7 +1133,7 @@ def keyset_screen():
 
 def change_key_screen():
     changing = True
-    
+    keys = [display_funct.up,display_funct.down,display_funct.right,display_funct.left,display_funct.space,display_funct.esc]
     while changing:
         screen.blit(keysetting_button, (display_funct.screen_width*600/1600,display_funct.screen_height*300/900))
         for event in pygame.event.get():
@@ -1127,30 +1141,33 @@ def change_key_screen():
                     pygame.quit()
                     exit()
             elif event.type == pygame.KEYDOWN:
-                if display_funct.current == 1:
-                    display_funct.up = event.key
-                    config["up"] = display_funct.up
-                    changing = False
-                elif display_funct.current == 2:
-                    display_funct.down = event.key
-                    config["down"] = display_funct.down
-                    changing = False
-                elif display_funct.current == 3:
-                    display_funct.right = event.key
-                    config["right"] = display_funct.right
-                    changing = False
-                elif display_funct.current == 4:
-                    display_funct.left = event.key
-                    config["left"] = display_funct.left
-                    changing = False
-                elif display_funct.current == 5:
-                    display_funct.space = event.key
-                    config["space"] = display_funct.space
-                    changing = False
-                elif display_funct.current == 6:
-                    display_funct.esc = event.key
-                    config["esc"] = display_funct.esc
-                    changing = False
+                if event.key in keys:
+                    pass
+                else:
+                    if display_funct.current == 1:
+                        display_funct.up = event.key
+                        config["up"] = display_funct.up
+                        changing = False
+                    elif display_funct.current == 2:
+                        display_funct.down = event.key
+                        config["down"] = display_funct.down
+                        changing = False
+                    elif display_funct.current == 3:
+                        display_funct.right = event.key
+                        config["right"] = display_funct.right
+                        changing = False
+                    elif display_funct.current == 4:
+                        display_funct.left = event.key
+                        config["left"] = display_funct.left
+                        changing = False
+                    elif display_funct.current == 5:
+                        display_funct.space = event.key
+                        config["space"] = display_funct.space
+                        changing = False
+                    elif display_funct.current == 6:
+                        display_funct.esc = event.key
+                        config["esc"] = display_funct.esc
+                        changing = False
             with open("config.txt", "w") as f:
                 json.dump(config, f)
         pygame.display.flip()
@@ -1684,6 +1701,7 @@ def title_multi():
 
         if selected_multi == 'host':
             screen.blit(titlehost_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*375/900))
+
         elif selected_multi == 'client':
             screen.blit(titleclient_on_button,(display_funct.screen_width*1000/1600, display_funct.screen_height*525/900))
 
@@ -2565,6 +2583,7 @@ Accept_return = []
 check_password = 0
 client_nick = ''
 stack_3 = 0
+server_socket = 0
 
 def Accept(server_socket):
     print("Thread Accept Start")
@@ -2609,11 +2628,11 @@ def host_screen(password,host_ip):
     HOST = host_ip
     PORT = 5555  # 포트 번호 (임의의 값으로 설정)
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((HOST, PORT))
-    server_socket.listen()
+    display_funct.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    display_funct.server_socket.bind((HOST, PORT))
+    display_funct.server_socket.listen()
     
-    t = threading.Thread(target=Accept, args=(server_socket,))
+    t = threading.Thread(target=Accept, args=(display_funct.server_socket,))
 
     t.start()
     print('서버가 시작되었습니다. 클라이언트의 연결을 기다리는 중...')
@@ -2850,7 +2869,7 @@ def host_screen(password,host_ip):
                             playing = False
 
                 elif event.key == display_funct.esc:
-                    server_socket.close()
+                    display_funct.server_socket.close()
                     display_funct.title = True
                     PY_UNO.main()
 
@@ -3303,8 +3322,8 @@ def image_scale():
     display_funct.titlestory_on_button = pygame.transform.scale(titlestory_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titlemulti_on_button = pygame.transform.scale(titlemulti_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
     display_funct.titleachieve_on_button = pygame.transform.scale(titleachieve_on_image, (display_funct.screen_width*26/320,display_funct.screen_height/9))
-    display_funct.titlehost_on_button = pygame.transform.scale(titlehost_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
-    display_funct.titleclient_on_button = pygame.transform.scale(titleclient_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titlehost_on_button = pygame.transform.scale(titlehost_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
+    display_funct.titleclient_on_button = pygame.transform.scale(titleclient_on_image, (display_funct.screen_width*7/32,display_funct.screen_height/9))
 
     #ESC
     display_funct.setting_button = pygame.transform.scale(setting_image, (display_funct.screen_width/16,display_funct.screen_height/9))
