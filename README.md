@@ -26,3 +26,5 @@
 + 멀티플레이 추가 구현 ( 턴 표시 타이머 표시)
 + 싱글플레이 AI 버그 수정
 + 멀티플레이 결과 창 우노버튼 필요
+
+https://github.com/SE-group18/uno-python/tree/main/uno%202.7/dist
