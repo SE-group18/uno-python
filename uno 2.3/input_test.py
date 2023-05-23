@@ -2,17 +2,11 @@
 
 import socket
 import pickle
+import threading
 
-HOST = '192.168.0.25'
-PORT = 5555  # 포트 번호 (임의의 값으로 설정)
+def Receive():
+    print("Thread Receive Start")
 
-try:
-    while True:
-    # 클라이언트 연결 수락
-        for i in range(5):
-            if i ==3:
-                padf
-            else:
-                print(i)
-except:
-    print("while break")
+s = threading.Thread(target=Receive, args=())
+s.start()
+

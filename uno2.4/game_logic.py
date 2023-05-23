@@ -172,7 +172,7 @@ def check_game_done(players, turn_tot):
 who = ""
 
 def extern_AI_player_turn(board, deck, player, players, turn):
-    display_funct.wait(1000000)
+    display_funct.wait(500000)
     stack_uno=0
     increment_card_old_vals(player)  # O(n)
 
@@ -180,6 +180,7 @@ def extern_AI_player_turn(board, deck, player, players, turn):
                                                  players, player.Main_Decision_Tree.Dec_Tree)
     degrade_hatval(player)  # O(n)
     display_funct.redraw_screen([(players[0], None)], board, players)
+    display_funct.wait(1000000)
 #주석
     if len(player.hand) == 1:
         test= False
@@ -234,6 +235,10 @@ def extern_player_turn(board, deck, player, players, turn):
             game_logic.start_ticks=pygame.time.get_ticks()
             game_logic.paused_time = 0
             display_funct.wildplayed = False
+
+        for a in player.hand:
+            if a.type == "d" or a.type == "a" or a.type == "c" or a.type == "p" or a.type == "s" or a.type == "r" or a.type == "k":
+                display_funct.fair += 1
 
         display_funct.cont3 += 1
 
@@ -441,6 +446,45 @@ def game_loop(board, deck, players):
 #######################################사운드#############################################
 mainmusic = pygame.mixer.Sound(os.getcwd()+"/sound/background.mp3")
 mainmusic.set_volume(0.25)
+all_received = False
+
+def Client_Receive(client_socket,board, players, deck, deck1):
+    print("Thread Client_Receive Start")
+
+    serialized_dict = display_funct.client_socket.recv(4096)
+    both_dict = pickle.loads(serialized_dict)  # 1024는 수신 버퍼의 크기를 나타냄
+
+    board_dict = both_dict[0]
+    player_dict = both_dict[1]
+
+    print(3)
+    board.turn_iterator = board_dict[1]
+    board.update_Board(deck1.grab_card_multi(board_dict[2]))
+    board.color = board_dict[4]
+
+    result = [len(value) for value in player_dict.values()]
+    print(player_dict)
+
+    for a in range(len(players)):
+        players[a].hand = []
+        if players[a].name[8] == "C":
+            for i in player_dict[players[a].name]:
+                players[a].grab_card_multi(deck1,i)
+        else:
+            players[a].grab_cards(deck,result[a])
+
+    print(player_dict)
+    print(board_dict)
+
+    game_logic.current_turn = board_dict[3][8]
+    game_logic.all_received = True
+    
+    print("Thread Exit")
+
+def Server_Receive(client_socket,board,players):
+    print("Thread Server_Receive Start")
+    data = client_socket.recv(4096)
+    
 
 
 #C지역 게임 모드
@@ -644,6 +688,7 @@ def game_loop_host(board, deck, players):
                 played_type = client_play[1][2]
 
                 if client_play[4] == True:
+                    display_funct.redraw_screen([(players[0], None)], board, players)
                     break
 
                 if played_color == "w":
@@ -668,23 +713,26 @@ def game_loop_host(board, deck, players):
                     players[target].grab_cards(deck, 2)
                     done = True
                 elif played_type == "s":        # skip turn card played
-                    done = True
                     for a in range(len(players)):
                         if  players[a].name == client_play[3]:
                             target = a
-                    players[a].skip = True
+                    players[target].skip = True
+                    done = True
                 elif played_type == "d":
                     for a in range(len(players)):
                         if  players[a].name == client_play[3]:
                             target = a
                     players[target].grab_cards(deck, 1)
                     done = True
+                elif played_type == "k":
+                    pass
                 else:
                     done = True
 
                 
 
                 display_funct.redraw_screen([(players[0], None)], board, players)
+            display_funct.wait(500000)
 
         else:            # handle for a human player
             board_dict = []
@@ -728,6 +776,7 @@ def game_loop_host(board, deck, players):
         turn = compute_turn(players, turn, board.turn_iterator)
 
 
+current_turn = ''
 def game_loop_client():
 
     serialized_dict = display_funct.client_socket.recv(4096)
@@ -736,15 +785,18 @@ def game_loop_client():
     board_dict = both_dict[0]
     player_dict = both_dict[1]
 
-    player1 = game_classes.Player(list(player_dict.keys())[0])
-    player2 = game_classes.Player(list(player_dict.keys())[1])
-    player3 = game_classes.Player(list(player_dict.keys())[2])
-    player4 = game_classes.Player(list(player_dict.keys())[3])
+    board = game_classes.Board("board1")
+
+    players = []
+    for a in range(len(list(player_dict.keys()))):
+        player_ = game_classes.Player(list(player_dict.keys())[a])
+        players.append(player_)
 
     My_turn = 0
     for a in range(len(list(player_dict.keys()))):
         if list(player_dict.keys())[a][8] == "C":
             My_turn = a
+
     deck = deck_gen.gen_rand_deck("deck", 0)
     deck1 = deck_gen.gen_rand_deck("deck1",1)
 
@@ -753,62 +805,25 @@ def game_loop_client():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+        c_r = threading.Thread(target=Client_Receive, args=(display_funct.client_socket, board, players, deck, deck1))
+        c_r.start()
 
-        serialized_dict = display_funct.client_socket.recv(4096)
-        both_dict = pickle.loads(serialized_dict)  # 1024는 수신 버퍼의 크기를 나타냄
+        Thread_done = False
+        while not Thread_done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+            
+            if game_logic.all_received == True:
+                print("done")
+                Thread_done = True
+                game_logic.all_received = False
 
-        board_dict = both_dict[0]
-        player_dict = both_dict[1]
-
-        print(3)
-        board = game_classes.Board("board1")
-        board.turn_iterator = board_dict[1]
-        board.update_Board(deck1.grab_card_multi(board_dict[2]))
-        board.color = board_dict[4]
-
-        result = [len(value) for value in player_dict.values()]
-        print(player_dict)
-
-        players = []
-        player1.hand=[]
-        if player1.name[8] == "C":
-            for a in player_dict[player1.name]:
-                player1.grab_card_multi(deck1, a)
-        else:
-            player1.grab_cards(deck,result[0])
-        players.append(player1)
-        
-        player2.hand=[]
-        if player2.name[8] == "C":
-            for a in player_dict[player2.name]:
-                print(a)
-                player2.grab_card_multi(deck1, a)
-        else:
-            player2.grab_cards(deck,result[1])
-        players.append(player2)
-
-        player3.hand=[]
-        if player3.name[8] == "C":
-            for a in player_dict[player3.name]:
-                player3.grab_card_multi(deck1, a)
-        else:
-            player3.grab_cards(deck,result[2])
-        players.append(player3)
-
-        player4.hand=[]
-        if player4.name[8] == "C":
-            for a in player_dict[player4.name]:
-                player4.grab_card_multi(deck1, a)
-        else:
-            player4.grab_cards(deck,result[3])
-        players.append(player4)
-
-        print(player_dict)
-        print(board_dict)
-
+        print("redraw")
         display_funct.redraw_screen([(players[My_turn], None)], board, players)
 
-        if board_dict[3][8] == 'C':
+        if game_logic.current_turn == 'C':
             print("My turn")
             done = False
             while not done:
@@ -954,16 +969,20 @@ def extern_player_turn_client(board, deck, player, players, turn):
     game_logic.paused_time = 0
     display_funct.cont3 = 0
     stack_uno=0
+    stack_wild=0
     while drop_again:
         turn_done = False
         selected = None
         grab = False
+
         if display_funct.wildplayed == True:
             game_logic.start_ticks=pygame.time.get_ticks()
             game_logic.paused_time = 0
             display_funct.wildplayed = False
 
-        display_funct.cont3 += 1
+        if stack_wild == 1:
+            serialized_dict = display_funct.client_socket.recv(4096)
+            stack_wild = 0
 
         # redraw display at start of human turn
         display_funct.redraw_screen([(player, None)], board, players)
@@ -974,9 +993,10 @@ def extern_player_turn_client(board, deck, player, players, turn):
         if len(allowed_card_list) == 0:
             display_funct.drawplay.play()
             player.grab_card(deck)
-            display_funct.redraw_screen([(players[0], None)], board, players)
+            display_funct.redraw_screen([(player, None)], board, players)
             turn = compute_turn(players, turn, board.turn_iterator)
-            return (grab, turn)
+            grab = True
+            turn_done = True
 
         while not turn_done:
             (update, selected, turn_done, grab) = intern_player_turn(
@@ -1011,7 +1031,10 @@ def extern_player_turn_client(board, deck, player, players, turn):
         else:
             drop_again = card_logic.card_played_type(board, deck,
                                                  player, players)
-            
+
+        if drop_again == True:
+            stack_wild += 1
+
         client_dict = []
         player_client_dict = {}
         for a in range(len(player.hand)):
@@ -1029,13 +1052,6 @@ def extern_player_turn_client(board, deck, player, players, turn):
         client_dict_pickle = pickle.dumps(client_dict)
         display_funct.client_socket.sendall(client_dict_pickle)
 
-        print("sended")
-        if drop_again == True:
-            display_funct.wildplayed = True
-
-        if display_funct.cont3 >= 4:
-            display_funct.cont3_true = True
-#주석
         if len(player.hand) == 1:
             
             test= False

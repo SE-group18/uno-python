@@ -8,10 +8,11 @@ import pygame
 pygame.display.set_caption("UNO!")
 # loop for allowing multiple games to be sda
 def main():
+    display_funct.fair = 0
     display_funct.player_total = 0
     display_funct.title = True
     display_funct.setting = False
-    display_funct.option = False
+    display_funct.option = False 
     display_funct.instorymode = False
     display_funct.achieve_title = False
 
@@ -20,4 +21,5 @@ def main():
         display_funct.title_screen()
 
 if __name__ == "__main__":
-    main()  
+    main()
+

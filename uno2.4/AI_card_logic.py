@@ -3,6 +3,7 @@ import game_logic
 import Main_Decision_Tree
 import display_funct
 import pygame
+import pickle
 
 def update_mem_trees(board, deck, player, players):
     pass
@@ -184,9 +185,33 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
             
 
             display_funct.redraw_screen([(players[0], None)], board, players)
-            display_funct.wait(1000000)
-             
+            
+            try:
+                board_dict = []
+                board_dict.append(board.name)
+                board_dict.append(board.turn_iterator)
+                board_dict.append(board.card_stack[-1].name)
+                board_dict.append(player.name)
+                board_dict.append(board.color)
 
+                player_dict = {}
+                for playersa in players:
+                    for a in range(len(playersa.hand)):
+                        try:
+                            player_dict[playersa.name].append(playersa.hand[a].name)
+                        except:
+                            player_dict[playersa.name] = [playersa.hand[a].name]
+
+                both_dict = []
+                both_dict.append(board_dict)
+                both_dict.append(player_dict)
+
+                both_dict_pickle = pickle.dumps(both_dict)         
+                display_funct.client_socket.sendall(both_dict_pickle)
+                print("player both send")
+            except:
+                print("For Multi")
+            display_funct.wait(1000000)
 
             Main_Decision_Tree.travel_Main_Decision_Tree(board, deck, player,
                                                          players, player.Main_Decision_Tree.Dec_Tree)
@@ -240,7 +265,32 @@ def AI_card_played_type(board, deck, player, players, target=None, selected_colo
                 
                 display_funct.redraw_screen([(players[0], None)], board, players)
                 test=False
-            
+        
+        try:
+            board_dict = []
+            board_dict.append(board.name)
+            board_dict.append(board.turn_iterator)
+            board_dict.append(board.card_stack[-1].name)
+            board_dict.append(player.name)
+            board_dict.append(board.color)
+
+            player_dict = {}
+            for playersa in players:
+                for a in range(len(playersa.hand)):
+                    try:
+                        player_dict[playersa.name].append(playersa.hand[a].name)
+                    except:
+                        player_dict[playersa.name] = [playersa.hand[a].name]
+
+            both_dict = []
+            both_dict.append(board_dict)
+            both_dict.append(player_dict)
+
+            both_dict_pickle = pickle.dumps(both_dict)         
+            display_funct.client_socket.sendall(both_dict_pickle)
+            print("player both send")
+        except:
+            print("For multi")
 
         display_funct.redraw_screen([(players[0], None)], board, players)
         display_funct.wait(1000000)

@@ -26,9 +26,7 @@ class Player:
         self.hand.append(card)
 
     def grab_card_multi(self, deckname, cardname):
-        for a in deckname.deck:
-            if a.name == cardname:
-                card = a
+        card = deckname.grab_card_multi(cardname)
         card.set_Owner(self.name)
         self.hand.append(card)
 
@@ -80,11 +78,15 @@ class Deck:  # calss defining a card deck
             print("deck is empty...")
             print("regenerating deck...")
             self.deck = deck_gen.gen_rand_deck(self.name, 1).deck
-
+        
         card = self.deck.pop()
         card.set_Owner(None)
         return card
 
+    def grab_card_multi(self,name):
+        for a in self.deck:
+            if a.name == name:
+                return a
 
 class Board:
 

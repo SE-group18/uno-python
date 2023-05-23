@@ -57,6 +57,7 @@ wildplayed = False
 
 #업적 ing
 first_victory = False
+fair_sa = False
 #cleared1, cleared2, cleared3, cleared4
 turn10 = False
 fair = 0
@@ -555,30 +556,36 @@ def draw_winners(winners, turn_tot):
     O(n) runtime where n is the size of the list winners
     """
     # clear screen (top half)
+    title_font = pygame.font.SysFont('malgungothic', 50)
     screen.fill(black)
     for player in winners:
         if player.name == 'player_1':
             screen.blit(resultwin_button,(screen_width*328.5/1600,screen_height/9))
             display_funct.winplay.play()
             if display_funct.instorymode == True and display_funct.cur_stage == 1:
+                display_funct.fair = 0
                 display_funct.cleared1 = True
                 config["cleared1"] = True
             elif display_funct.instorymode == True and display_funct.cur_stage == 2:
+                display_funct.fair = 0
                 display_funct.cleared2 = True
                 config["cleared2"] = True
             elif display_funct.instorymode == True and display_funct.cur_stage == 3:
+                display_funct.fair = 0
                 display_funct.cleared3 = True
                 config["cleared3"] = True
             elif display_funct.instorymode == True and display_funct.cur_stage == 4:
+                display_funct.fair = 0
                 display_funct.cleared4 = True
                 config["cleared4"] = True
 
             if display_funct.instorymode == False:
                 if display_funct.fair == 0:
-                    display_funct.fair = True
+                    display_funct.fair_sa = True
                 
                 if display_funct.unoother_played == True:
                     display_funct.unoother_what = True
+                
 
                 display_funct.first_victory = True
                 display_funct.stroke5 += 1
@@ -590,12 +597,14 @@ def draw_winners(winners, turn_tot):
                 json.dump(config, f)
 
         else:
+            display_funct.unoother_played = True
             display_funct.fair = 0
             display_funct.stroke5 = 0
             display_funct.first_defeat = True
             display_funct.cont3_true = False
-
+            whose_winner = title_font.render(winners[0].name+' Win!', True, (0, 0, 0))
             screen.blit(resultlose_button,(screen_width*328.5/1600,screen_height/9))
+            screen.blit(whose_winner,(screen_width*580/1600,screen_height*500/900))
             display_funct.loseplay.play()
         break
 
@@ -641,6 +650,7 @@ def esc_screen():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.left:
+                    menuplay.play()
                     if selected_button == "resume":
                         selected_button = "exit"
                     elif selected_button == "title":
@@ -651,6 +661,7 @@ def esc_screen():
                         selected_button = "setting"
 
                 elif event.key == display_funct.right:
+                    menuplay.play()
                     if selected_button == "resume":
                         selected_button = "title"
                     elif selected_button == "title":
@@ -661,6 +672,7 @@ def esc_screen():
                         selected_button = "resume"
 
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     if selected_button == 'achieve':
                         pass
                     else:
@@ -669,16 +681,20 @@ def esc_screen():
                         
                 
                 elif event.key == display_funct.up:
+                    menuplay.play()
                     if selected_button == 'achieve':
                         selected_button = temp
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if selected_button == "resume":
                         display_funct.i = 1
                         display_funct.option = False
                     elif selected_button == "title":
                         display_funct.title = True
                         display_funct.option = False
+                        if display_funct.instorymode == False:
+                            display_funct.stroke5 = 0
                         PY_UNO.main()
                         
                     elif selected_button == "setting":
@@ -775,6 +791,7 @@ def setting_screen():
                 exit()
             elif event.type == KEYDOWN:
                 if event.key == display_funct.up:
+                    menuplay.play()
                     if selected_option == "sound":
                         pass
                     elif selected_option == "mainsound":
@@ -795,6 +812,7 @@ def setting_screen():
                         selected_option = "set"
                         
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     if selected_option == "sound":
                         selected_option = "mainsound"
                     elif selected_option == "mainsound":
@@ -815,6 +833,7 @@ def setting_screen():
                         pass
                 
                 elif event.key == display_funct.right or event.key == display_funct.left:
+                    menuplay.play()
                     if selected_option == "sound" and selected_option3 == "left":
                         selected_option3 = "right"
                     elif selected_option == "sound" and selected_option3 == "right":
@@ -837,6 +856,7 @@ def setting_screen():
 
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if selected_option == "sound" and selected_option3 == "left":
                         if display_funct.sound == 0:
                             pass
@@ -1006,6 +1026,7 @@ def setting_screen():
                         PY_UNO.main()
                     
                 elif event.key == display_funct.esc:
+                    menuplay.play()
                     display_funct.setting = False
                     PY_UNO.main()
     
@@ -1050,6 +1071,7 @@ def keyset_screen():
                     exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.down:
+                    menuplay.play()
                     if display_funct.current == 1:
                         display_funct.current = 2
                     elif display_funct.current == 2:  
@@ -1061,6 +1083,7 @@ def keyset_screen():
                     elif display_funct.current == 5:  
                         display_funct.current = 6
                 elif event.key == display_funct.up:
+                    menuplay.play()
                     if display_funct.current == 2:
                         display_funct.current = 1
                     elif display_funct.current == 3:  
@@ -1073,6 +1096,7 @@ def keyset_screen():
                         display_funct.current = 5
                 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if display_funct.current == 1: #윗키
                         change_key_screen()
                     elif display_funct.current == 2: #아래
@@ -1087,6 +1111,7 @@ def keyset_screen():
                         change_key_screen()
 
                 elif event.key == display_funct.esc:
+                    menuplay.play()
                     keysetting = False
         display_funct.achieve_screen()
         pygame.display.flip()
@@ -1270,7 +1295,7 @@ def achieve_screen():
             screen.blit(achieve_card, (display_funct.screen_width*720/1600, display_funct.screen_height*105/900))
             achieve_card_date = text_font.render(str(turn10_date), True, (0, 0, 0))
             screen.blit(achieve_card_text, (display_funct.screen_width*720/1600, display_funct.screen_height*135/900))
-            if turn10_date != 0:
+            if cont3_date != 0:
                 screen.blit(achieve_card_date, (display_funct.screen_width*720/1600, display_funct.screen_height*160/900))
                 screen.blit(cur_on_button, (display_funct.screen_width*935/1600, display_funct.screen_height*95/900))
 
@@ -1283,6 +1308,7 @@ def achieve_screen():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.space:
+                    menuplay.play()
                     if selected_button == 'next':
                         page += 1
                         if page == 3:
@@ -1293,20 +1319,23 @@ def achieve_screen():
                             selected_button = 'next'
 
                 elif event.key == display_funct.right:
+                    menuplay.play()
                     if page == 2 and selected_button == 'back':
                         selected_button = 'next'
                     elif page == 2 and selected_button == 'next':
                         selected_button = 'back'
 
                 elif event.key == display_funct.left:
+                    menuplay.play()
                     if page == 2 and selected_button == 'back':
                         selected_button = 'next'
                     elif page == 2 and selected_button == 'next':
                         selected_button = 'back'
 
                 elif event.key == display_funct.esc:
+                    menuplay.play()
                     display_funct.achieve_title = False
-                    PY_UNO.main()
+
         achieve_check()
         pygame.display.flip()
 
@@ -1375,7 +1404,7 @@ def achieve_check():
         config_ach["turn10_date"] = turn10_date
         achieve_popup(achieve)
 
-    elif display_funct.fair == True and display_funct.fair_check == 0:       #10턴 승리
+    elif display_funct.fair_sa == True and display_funct.fair_check == 0:       #10턴 승리
         achieve = "fair"
         current_date = datetime.now().strftime("%Y-%m-%d")
         display_funct.fair_date = current_date
@@ -1569,18 +1598,21 @@ def title_single():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.up:
+                    menuplay.play()
                     if selected_single == 'single':
                         selected_single = 'story'
                     else:
                         selected_single = 'single'
 
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     if selected_single == 'single':
                         selected_single = 'story'
                     else:
                         selected_single = 'single'
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if selected_single == 'single':
                         title_sing = False
                         display_funct.single_screen()
@@ -1591,9 +1623,11 @@ def title_single():
                         display_funct.story_screen()
 
                 elif event.key == display_funct.esc or event.key == display_funct.left:
+                    menuplay.play()
                     title_sing = False
                     display_funct.title = True
             elif event.type ==MOUSEBUTTONDOWN:
+                menuplay.play()
                 if event.button == 1:
                     click_x, click_y = event.pos
                     # 멀티 플레이 부분
@@ -1659,18 +1693,21 @@ def title_multi():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.up:
+                    menuplay.play()
                     if selected_multi == 'host':
                         selected_multi = 'client'
                     else:
                         selected_multi = 'host'
 
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     if selected_multi == 'host':
                         selected_multi = 'client'
                     else:
                         selected_multi = 'host'
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if selected_multi == 'host':
                         done = False
                         password = ''
@@ -1695,6 +1732,7 @@ def title_multi():
                                             display_funct.host_screen(password, host_ip)
 
                                     elif event.key == display_funct.esc:
+                                        menuplay.play()
                                         done = True
                                         pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,180,60])
                                     
@@ -1733,9 +1771,10 @@ def title_multi():
                                     exit()
                                 elif event.type == pygame.KEYDOWN:
                                     if event.key == display_funct.esc:
+                                        menuplay.play()
                                         done = True
                                         step = 0
-                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*270/900,360,90])
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*270/900,360,80])
                                     
                                     elif event.key == pygame.K_BACKSPACE:
                                         if step == 0:
@@ -1773,9 +1812,14 @@ def title_multi():
                                                 message = client_socket.recv(1024)
                                                 if (message.decode() == 'close'):
                                                     client_socket.close()
-                                                    PY_UNO.main()
+                                                    pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*270/900,360,80])
+                                                    pw_error = pass_font.render("Password Error", True, (255, 255, 255))
+                                                    screen.blit(pw_error,(display_funct.screen_width*1020/1600,display_funct.screen_height*270/900))
+                                                    step=0
+                                                    password = ''
                                                 elif (message.decode() == 'full'):
                                                     client_socket.close()
+                                                    pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*270/900,360,80])
                                                     full_1 = pass_font.render("Room is fulled", True, (255, 255, 255))
                                                     screen.blit(full_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*270/900))
                                                     step=0
@@ -1798,6 +1842,7 @@ def title_multi():
                             pygame.display.flip()
 
                 elif event.key == display_funct.esc or event.key == display_funct.left:
+                    menuplay.play()
                     title_mul = False
                     display_funct.title = True
            
@@ -1986,6 +2031,7 @@ def title_screen():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.up:
+                    menuplay.play()
                     # 위쪽 방향키 클릭 시
                     if selected_button == "single":
                         selected_button = "exit"
@@ -1997,6 +2043,7 @@ def title_screen():
                         selected_button = "option"
 
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     # 아래쪽 방향키 클릭 시
                     if selected_button == "single":
                         selected_button = "story"
@@ -2007,6 +2054,7 @@ def title_screen():
                     else:
                         selected_button = "single"
                 elif event.key == display_funct.space: #우측키 스페이스 엔터
+                    menuplay.play()
                     if selected_button == "single":
                         display_funct.title = False
                         display_funct.title_single()
@@ -2031,6 +2079,7 @@ def title_screen():
                         display_funct.achieve_screen()
 
                 elif event.key == display_funct.left:
+                    menuplay.play()
                     if selected_button == 'achieve':
                         pass
                     else:
@@ -2038,6 +2087,7 @@ def title_screen():
                         selected_button = 'achieve'
                 
                 elif event.key == display_funct.right:
+                    menuplay.play()
                     if selected_button == 'achieve':
                         selected_button = temp
 
@@ -2158,6 +2208,7 @@ def single_screen():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.up:
+                    menuplay.play()
                     # 위쪽 방향키 클릭 시
 
                     if selected_button1 == "ai1":
@@ -2176,6 +2227,7 @@ def single_screen():
                         selected_button1 = "ai6"
 
                 elif event.key == display_funct.down:
+                    menuplay.play()
                     if selected_button1 == "ai1":
                         selected_button1 = "ai2"
                     elif selected_button1 == "ai2":
@@ -2192,6 +2244,7 @@ def single_screen():
                         pass
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if selected_button1 == "ai1":
                         done = False
                         while not done:
@@ -2262,6 +2315,7 @@ def single_screen():
                             playing = False
 
                 elif event.key == display_funct.esc:
+                    menuplay.play()
                     display_funct.title = True
                     PY_UNO.main()
 
@@ -2278,7 +2332,7 @@ def single_screen():
         print(a.name)
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
-    player1.grab_cards(deck1, 2)
+    player1.grab_cards(deck1, 1)
     playerAI_list = []
 
     i=2
@@ -2321,12 +2375,14 @@ def check_screen():
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.right or event.key == display_funct.left:
+                    menuplay.play()
                     if starting == "yes":
                         starting = "no"
                     else:
                         starting = "yes"
 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     if starting == "yes":
                         checking = False
                         display_funct.s_playing = False
@@ -2383,45 +2439,40 @@ def story_screen():
             
             elif event.type == pygame.KEYDOWN:
                 if event.key == display_funct.right:
+                    menuplay.play()
                     if display_funct.cur_stage == 1:
                         if display_funct.cleared1 == True:
                             display_funct.cur_stage = 2
-                            menuplay.play()
-                        else:
-                            menuplay.play()
+
                     elif display_funct.cur_stage == 2:
                         if display_funct.cleared2 == True:
                             display_funct.cur_stage = 3
-                            menuplay.play()
-                        else:
-                            menuplay.play()
+
 
                     elif display_funct.cur_stage == 3:
                         if display_funct.cleared3 == True:
                             display_funct.cur_stage = 4
-                            menuplay.play()
-                        else:
-                            menuplay.play()
+
                     elif display_funct.cur_stage == 4:
                         menuplay.play()
                         pass
                 elif event.key == display_funct.left:
-                    if display_funct.cur_stage == 1:
-                        menuplay.play()
-                    elif display_funct.cur_stage == 2:
+                    menuplay.play()
+
+                    if display_funct.cur_stage == 2:
                         display_funct.cur_stage = 1
-                        menuplay.play()
                     elif display_funct.cur_stage == 3:
                         display_funct.cur_stage = 2
-                        menuplay.play()
                     elif display_funct.cur_stage == 4:
                         display_funct.cur_stage = 3
-                        menuplay.play()
+
                 
                 elif event.key == display_funct.space:
+                    menuplay.play()
                     check_screen()
 
                 elif event.key == display_funct.esc:
+                    menuplay.play()
                     display_funct.s_playing=False
                     display_funct.title = True
                     PY_UNO.main()
@@ -3352,7 +3403,7 @@ loseplay = pygame.mixer.Sound(os.getcwd()+"/sound/lose.wav")
 drawplay = pygame.mixer.Sound(os.getcwd()+"/sound/from_deck.wav")
 
 
-menuplay.set_volume(subsound*sound/100)
+menuplay.set_volume(subsound*sound/200)
 cardplay.set_volume(subsound*sound/100)
 winplay.set_volume(subsound*sound/100)
 loseplay.set_volume(subsound*sound/100)
@@ -3360,7 +3411,7 @@ drawplay.set_volume(subsound*sound/100)
   
 def setsound():
     cardplay.set_volume(display_funct.subsound*display_funct.sound/100)
-    menuplay.set_volume(display_funct.subsound*display_funct.sound/100)
+    menuplay.set_volume(display_funct.subsound*display_funct.sound/250)
     winplay.set_volume(display_funct.subsound*display_funct.sound/100)
     loseplay.set_volume(display_funct.subsound*display_funct.sound/100)
     loseplay.set_volume(display_funct.subsound*display_funct.sound/100)

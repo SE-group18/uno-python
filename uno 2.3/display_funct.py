@@ -1696,7 +1696,7 @@ def title_multi():
 
                                     elif event.key == display_funct.esc:
                                         done = True
-                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,150,60])
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,180,60])
                                     
                                     elif event.key == pygame.K_BACKSPACE:
                                         password = password[:-1]
@@ -1735,7 +1735,7 @@ def title_multi():
                                     if event.key == display_funct.esc:
                                         done = True
                                         step = 0
-                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*300/900,300,60])
+                                        pygame.draw.rect(display_funct.screen, (0,0,0), [display_funct.screen_width*1020/1600,display_funct.screen_height*270/900,360,90])
                                     
                                     elif event.key == pygame.K_BACKSPACE:
                                         if step == 0:
@@ -1755,7 +1755,7 @@ def title_multi():
                                                 try:
                                                     display_funct.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                                                     display_funct.client_socket.connect((SERVER_HOST, SERVER_PORT))
-                                                    #여기서 받았을 서버가
+                                                    
                                                     step = 1
                                                 except:
                                                     step = 0
@@ -1766,7 +1766,6 @@ def title_multi():
                                             if len(password) != 4:
                                                 pass
                                             else:
-                                                title_mul = False
                                                 ####### 클라이언트 접속 확인 IP 확인 후 패스워드 확인하게 만듬
                                                 #display_funct.host_screen(password, ip)
                                                 #패스워드를 보내고 안맞으면 킥
@@ -1775,7 +1774,13 @@ def title_multi():
                                                 if (message.decode() == 'close'):
                                                     client_socket.close()
                                                     PY_UNO.main()
+                                                elif (message.decode() == 'full'):
+                                                    client_socket.close()
+                                                    full_1 = pass_font.render("Room is fulled", True, (255, 255, 255))
+                                                    screen.blit(full_1,(display_funct.screen_width*1020/1600,display_funct.screen_height*270/900))
+                                                    step=0
                                                 else:
+                                                    title_mul = False
                                                     display_funct.client_screen(ip,password)
                                     else:
                                         if step == 0:
@@ -2269,6 +2274,8 @@ def single_screen():
     # each other)
     deck1 = gen_rand_deck("deck1", 0)
 
+    for a in deck1.deck:
+        print(a.name)
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1")
     player1.grab_cards(deck1, 2)
@@ -2492,6 +2499,8 @@ def story_screen():
 
 Accept_return = []
 check_password = 0
+client_nick = ''
+stack_3 = 0
 
 def Accept(server_socket):
     print("Thread Accept Start")
@@ -2506,6 +2515,16 @@ def Receive(client_socket):
     data = client_socket.recv(4096)
     display_funct.check_password = data.decode()
 
+def Message_Receive(client_socket):
+    try:
+        print("Thread Message Receive Start")
+        nick = client_socket.recv(4096)
+        display_funct.client_nick = nick.decode()
+        print(nick.decode())
+        display_funct.stack_3 = 0
+        
+    except:
+        pass
 
 def host_screen(password,host_ip):
     selected_button1 = "ai1"
@@ -2537,6 +2556,8 @@ def host_screen(password,host_ip):
     
     stack_1 = 0
     stack_2 = 0
+    
+   
     chat = ''
     while playing:
         try:
@@ -2559,9 +2580,10 @@ def host_screen(password,host_ip):
                     client_socket.sendall(message.encode())
                     display_funct.check_password = 0
                     chat = 'Client Password Error'
+                    
                 
                 elif i == 0:
-                    message = "close"
+                    message = "full"
                     client_socket.sendall(message.encode())
                     display_funct.check_password = 0
                     chat = 'Client No room'
@@ -2587,9 +2609,11 @@ def host_screen(password,host_ip):
                             break
                 serialized_data = pickle.dumps(selected_ais)
                 display_funct.client_socket.sendall(serialized_data)
-                
-                if selected_ai5 == "kick":
-                    selected_ai5 = 0
+            
+                if display_funct.stack_3 == 0:
+                    display_funct.stack_3 = 1
+                    m = threading.Thread(target=Message_Receive, args=(display_funct.client_socket,))
+                    m.start()
 
         except socket.error as e:
             display_funct.client_socket = ''
@@ -2605,8 +2629,14 @@ def host_screen(password,host_ip):
                         selected_ai3 = "no"
                     elif a==3:
                         selected_ai4 = "no"
+            if selected_ai5 == "kick":
+                chat = "Client kicked"
+
+            selected_ai5 = 0
+            display_funct.stack_3 = 0
         
         screen.fill(black)
+        
         screen.blit(achieveoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
         screen.blit(ip, (screen_width*590/1600,screen_height*80/900))
         screen.blit(pw, (screen_width*590/1600,screen_height*115/900))
@@ -2623,13 +2653,13 @@ def host_screen(password,host_ip):
         i = 0
 
         for a in selected_ais:
-            if a == "area":
+            if a == "area" or a == "client":
                 i+=1
         
         player1 = player_font.render(selected_ai1, True, (255, 255, 255))
         area = player_font.render('AI', True, (255, 255, 255))
         area_a = player_font.render('Closed', True, (255, 255, 255))
-        client_name = player_font.render('Client', True, (255, 255, 255))
+        client_name = player_font.render(display_funct.client_nick, True, (255, 255, 255))
         
         if selected_button1 == "ai1":
             screen.blit(singleplayer_on_button, (screen_width*677.5/1600,screen_height*185/900))
@@ -2721,7 +2751,6 @@ def host_screen(password,host_ip):
                                         
                     elif selected_button1 == "ai2":
                         if selected_ai2 == "client":
-                            print(123)
                             selected_ai5 = "kick"
                         elif selected_ai2 == "no":
                             selected_ai2 = "area"
@@ -2732,7 +2761,7 @@ def host_screen(password,host_ip):
 
                     elif selected_button1 == "ai3":
                         if selected_ai3 == "client":
-                            selected_ais = "kick"
+                            selected_ai5 = "kick"
                         elif selected_ai3 == "no":
                             selected_ai3 = "area"
                         elif selected_ai3 == "area":
@@ -2764,8 +2793,9 @@ def host_screen(password,host_ip):
     
         pygame.display.flip()
 
-    message = 'start'
-    client_socket.sendall(message.encode())
+    selected_ais[5] = 'start'
+    serialized_data = pickle.dumps(selected_ais)
+    display_funct.client_socket.sendall(serialized_data)
 
     board1 = game_classes.Board("board1")  
 
@@ -2775,9 +2805,9 @@ def host_screen(password,host_ip):
 
     # defining a 7 player uno game
     player1 = game_classes.Player("player_1Host")
-    player1.grab_cards(deck1, 2)
+    player1.grab_cards(deck1, 7)
     playerAI_list = []
-
+    
     i=2
     for a in selected_ais:
 
@@ -2789,7 +2819,7 @@ def host_screen(password,host_ip):
             i+=1
             playerAI_list.append(playerAI)
         elif a == "client":
-            playerAI = game_AI.make_AI_basic(deck1 ,"player_"+str(i)+"Client",7)
+            playerAI = game_AI.make_Client(deck1 ,"player_"+str(i)+"Client")
             i+=1
             playerAI_list.append(playerAI)
 
@@ -2805,6 +2835,8 @@ def client_screen(host_ip,password):
     selected_button1 = "ai1"
     ip = player_font.render("IP: " + str(host_ip), True, (255, 255, 255))
     pw = player_font.render("Password: " + str(password), True, (255, 255, 255))
+    client_nick = 'Client'
+    display_funct.client_socket.send(client_nick.encode())
     while playing:
         screen.fill(black)
         screen.blit(achieveoption_button, (display_funct.screen_width*1095/3200,display_funct.screen_height*50/900))
@@ -2815,10 +2847,14 @@ def client_screen(host_ip,password):
         screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*425/900))
         screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*545/900))
         screen.blit(singlestart_button, (screen_width*677.5/1600,screen_height*690/900))
-
+    
         datas = display_funct.client_socket.recv(4096)
-        selected_ais = pickle.loads(datas)
+        try:
+            selected_ais = pickle.loads(datas)
+        except:
+            pass
         if selected_ais[5] == 'start':
+            display_funct.client_socket.send("Okay".encode())
             playing = False
             game_logic.game_loop_client()
         if selected_ais[5] == 'kick':
@@ -2828,7 +2864,7 @@ def client_screen(host_ip,password):
             PY_UNO.main()
 
         player = []
-        for i in range(len(selected_ais)-1):
+        for i in range(len(selected_ais)-2):
             player.append(selected_ais[i])
 
         selected_button1 = selected_ais[4]
@@ -2847,7 +2883,7 @@ def client_screen(host_ip,password):
         player1 = player_font.render(str(player[0]), True, (255, 255, 255))
         area = player_font.render('AI', True, (255, 255, 255))
         area_a = player_font.render('Closed', True, (255, 255, 255))
-        client_name = player_font.render('Client', True, (255, 255, 255))
+        client_name = player_font.render(client_nick, True, (255, 255, 255))
 
         screen.blit(player1, (display_funct.screen_width*755/1600, display_funct.screen_height*200/900))
         if player[1] == "area":
@@ -2880,6 +2916,42 @@ def client_screen(host_ip,password):
                     display_funct.title = True
                     display_funct.client_socket.close()
                     PY_UNO.main()
+                elif event.key == display_funct.space:
+                    done = False
+                    while not done:
+                        for event in pygame.event.get():
+                            if event.type == pygame.QUIT:
+                                pygame.quit()
+                                exit()
+
+                            if event.type == pygame.KEYDOWN:
+                                if event.key == display_funct.space:
+                                    done = True
+                                elif event.key == pygame.K_BACKSPACE:
+                                    client_nick = client_nick[:-1]
+                                    if client_nick == '':
+                                        fake_nick = ' '
+                                        display_funct.client_socket.send(fake_nick.encode())
+                                    else:
+                                        display_funct.client_socket.send(client_nick.encode())
+                                else:
+                                    if len(client_nick) > 6:
+                                        pass
+                                    else:
+                                        client_nick += event.unicode
+                                        display_funct.client_socket.send(client_nick.encode())
+
+                        player1 = player_font.render(client_nick, True, (255, 255, 255))
+                        if player[1] == "client":
+                            screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*305/900))
+                            screen.blit(player1, (display_funct.screen_width*750/1600, display_funct.screen_height*320/900))
+                        elif player[2] == "client":
+                            screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*425/900))
+                            screen.blit(player1, (display_funct.screen_width*750/1600, display_funct.screen_height*440/900))
+                        elif player[3] == "client":
+                            screen.blit(singleplayer_button, (screen_width*677.5/1600,screen_height*545/900))
+                            screen.blit(player1, (display_funct.screen_width*750/1600, display_funct.screen_height*560/900))
+                        pygame.display.flip()
         pygame.display.flip()
 
 def redraw_screen_client(player_you, board, players_other):
